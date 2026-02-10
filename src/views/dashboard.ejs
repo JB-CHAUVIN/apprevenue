@@ -1,0 +1,234 @@
+<%- include('partials/head') %>
+
+<div class="layout">
+  <%- include('partials/sidebar') %>
+
+  <main class="main-content">
+    <div class="page-header">
+      <h1><% if (currentApp) { %><%= currentApp.name %><% } else { %>Dashboard<% } %></h1>
+      <div class="toolbar" style="margin-bottom:0;">
+        <select id="appSelect" onchange="if(this.value==='all'){location.href='/dashboard?days=<%= days %>'}else{location.href='/dashboard/app/'+this.value+'?days=<%= days %>'}">
+          <option value="all" <%= !currentApp ? 'selected' : '' %>>All Apps</option>
+          <% apps.forEach(function(a) { %>
+          <option value="<%= a._id %>" <%= currentApp && currentApp._id.toString() === a._id.toString() ? 'selected' : '' %>><%= a.name %></option>
+          <% }); %>
+        </select>
+        <select id="periodSelect" onchange="location.href='<%= currentApp ? '/dashboard/app/' + currentApp._id : '/dashboard' %>?days='+this.value">
+          <option value="7" <%= days==7?'selected':'' %>>7 days</option>
+          <option value="14" <%= days==14?'selected':'' %>>14 days</option>
+          <option value="30" <%= days==30?'selected':'' %>>30 days</option>
+          <option value="90" <%= days==90?'selected':'' %>>90 days</option>
+        </select>
+        <button class="btn btn-neon btn-sm" onclick="triggerCollect()">Collect Now</button>
+        <a href="/api/export/admob?format=csv" class="btn btn-outline btn-sm" download>Export CSV</a>
+      </div>
+    </div>
+
+    <% if (currentApp) { %>
+    <div class="app-info-bar">
+      <span class="app-name"><%= currentApp.name %></span>
+      <% if (currentApp.iosAppId) { %><span class="badge badge-platform">iOS</span><% } %>
+      <% if (currentApp.androidPackageName) { %><span class="badge badge-platform">Android</span><% } %>
+      <% if (currentApp.stripeProductId) { %><span class="badge badge-platform">Stripe</span><% } %>
+    </div>
+    <% } %>
+
+    <!-- KPI Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="label">AdMob Revenue (<%= days %>d)</div>
+        <div class="value cyan">$<%= totals.admobRevenue %></div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Impressions (<%= days %>d)</div>
+        <div class="value purple"><%= totals.impressions %></div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Stripe MRR</div>
+        <div class="value green">$<%= totals.mrr %></div>
+      </div>
+      <div class="stat-card">
+        <div class="label">Active Apps</div>
+        <div class="value pink"><%= totals.activeApps %></div>
+      </div>
+    </div>
+
+    <!-- AdMob Revenue Chart -->
+    <div class="section">
+      <h2>AdMob Revenue</h2>
+      <div class="card">
+        <div class="chart-container">
+          <canvas id="admobChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Stripe MRR Chart -->
+    <% if (stripe.length > 0) { %>
+    <div class="section">
+      <h2>Stripe MRR</h2>
+      <div class="card">
+        <div class="chart-container">
+          <canvas id="stripeChart"></canvas>
+        </div>
+      </div>
+    </div>
+    <% } %>
+
+    <!-- App Store Connect -->
+    <% if (appstore.length > 0) { %>
+    <div class="section">
+      <h2>App Store Connect</h2>
+      <div class="card" style="overflow-x:auto;">
+        <table>
+          <thead><tr><th>Date</th><th>App</th><th>Version</th><th>Build</th><th>Status</th><th>Rating</th></tr></thead>
+          <tbody>
+            <% appstore.forEach(a => { %>
+            <tr>
+              <td><%= a.date %></td>
+              <td><%= a.appName %></td>
+              <td><%= a.latestVersion || '-' %></td>
+              <td><%= a.latestBuild || '-' %></td>
+              <td><span class="badge <%= a.buildStatus === 'READY_FOR_SALE' ? 'badge-success' : 'badge-warn' %>"><%= a.buildStatus || 'N/A' %></span></td>
+              <td><%= a.averageRating ? parseFloat(a.averageRating).toFixed(1) : '-' %></td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <% } %>
+
+    <!-- Google Play -->
+    <% if (googleplay.length > 0) { %>
+    <div class="section">
+      <h2>Google Play</h2>
+      <div class="card" style="overflow-x:auto;">
+        <table>
+          <thead><tr><th>Date</th><th>Package</th><th>Version</th><th>Track</th><th>Status</th><th>Rating</th></tr></thead>
+          <tbody>
+            <% googleplay.forEach(g => { %>
+            <tr>
+              <td><%= g.date %></td>
+              <td><%= g.packageName %></td>
+              <td><%= g.latestVersionName || '-' %> (<%= g.latestVersionCode || '-' %>)</td>
+              <td><%= g.track %></td>
+              <td><span class="badge <%= g.releaseStatus === 'completed' ? 'badge-success' : 'badge-warn' %>"><%= g.releaseStatus || 'N/A' %></span></td>
+              <td><%= g.averageRating ? parseFloat(g.averageRating).toFixed(1) : '-' %></td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <% } %>
+
+    <!-- Stripe Details -->
+    <% if (stripe.length > 0) { %>
+    <div class="section">
+      <h2>Stripe</h2>
+      <div class="card" style="overflow-x:auto;">
+        <table>
+          <thead><tr><th>Date</th><th>Active Subs</th><th>New</th><th>Canceled</th><th>MRR</th><th>Revenue</th><th>Churn</th></tr></thead>
+          <tbody>
+            <% stripe.forEach(s => { %>
+            <tr>
+              <td><%= s.date %></td>
+              <td><%= s.activeSubscriptions %></td>
+              <td><%= s.newSubscriptions %></td>
+              <td><%= s.canceledSubscriptions %></td>
+              <td>$<%= parseFloat(s.mrr).toFixed(2) %></td>
+              <td>$<%= parseFloat(s.totalRevenue).toFixed(2) %></td>
+              <td><span class="badge <%= parseFloat(s.churnRate) > 5 ? 'badge-error' : 'badge-success' %>"><%= parseFloat(s.churnRate).toFixed(1) %>%</span></td>
+            </tr>
+            <% }); %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <% } %>
+
+    <!-- Collection Logs -->
+    <% if (!currentApp) { %>
+    <div class="section">
+      <h2>Collection Logs</h2>
+      <div class="card" style="overflow-x:auto;">
+        <table>
+          <thead><tr><th>Time</th><th>Source</th><th>Status</th><th>Records</th><th>Duration</th><th>Message</th></tr></thead>
+          <tbody>
+            <% logs.forEach(l => { %>
+            <tr>
+              <td><%= new Date(l.createdAt).toLocaleString() %></td>
+              <td><%= l.source %></td>
+              <td><span class="badge badge-<%= l.status === 'success' ? 'success' : l.status === 'error' ? 'error' : 'warn' %>"><%= l.status %></span></td>
+              <td><%= l.recordsCollected || 0 %></td>
+              <td><%= l.durationMs ? l.durationMs + 'ms' : '-' %></td>
+              <td style="max-width:300px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" title="<%= l.message || '' %>"><%= l.message || '-' %></td>
+            </tr>
+            <% }); %>
+            <% if (logs.length === 0) { %>
+            <tr><td colspan="6" style="text-align:center;color:var(--text-muted);">No collection logs yet</td></tr>
+            <% } %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <% } %>
+
+    <footer style="text-align:center;color:var(--text-muted);font-size:12px;padding:32px 0 16px;">
+      &copy; <%= new Date().getFullYear() %> <%= typeof siteName !== 'undefined' ? siteName : 'AppRevenue' %>
+    </footer>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4/dist/chart.umd.min.js"></script>
+<script>
+  const admobData = <%- JSON.stringify(admobDaily) %>;
+  if (admobData.length > 0) {
+    new Chart(document.getElementById('admobChart'), {
+      type: 'bar',
+      data: {
+        labels: admobData.map(d => d.date),
+        datasets: [{ label: 'Revenue ($)', data: admobData.map(d => parseFloat(d.revenue)), backgroundColor: 'rgba(0,240,255,0.3)', borderColor: 'rgba(0,240,255,0.8)', borderWidth: 1, borderRadius: 4 }],
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        scales: {
+          y: { beginAtZero: true, ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+          x: { ticks: { color: '#94a3b8' }, grid: { display: false } },
+        },
+        plugins: { legend: { labels: { color: '#e2e8f0' } } },
+      },
+    });
+  }
+
+  const stripeData = <%- JSON.stringify(stripe) %>;
+  if (stripeData.length > 0 && document.getElementById('stripeChart')) {
+    new Chart(document.getElementById('stripeChart'), {
+      type: 'line',
+      data: {
+        labels: stripeData.map(d => d.date),
+        datasets: [{ label: 'MRR ($)', data: stripeData.map(d => parseFloat(d.mrr)), borderColor: '#22c55e', backgroundColor: 'rgba(34,197,94,0.1)', fill: true, tension: 0.3 }],
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        scales: {
+          y: { beginAtZero: true, ticks: { color: '#94a3b8' }, grid: { color: 'rgba(255,255,255,0.05)' } },
+          x: { ticks: { color: '#94a3b8' }, grid: { display: false } },
+        },
+        plugins: { legend: { labels: { color: '#e2e8f0' } } },
+      },
+    });
+  }
+
+  async function triggerCollect() {
+    try {
+      const res = await fetch('/api/collect', { method: 'POST' });
+      const data = await res.json();
+      alert('Collection complete!');
+      location.reload();
+    } catch (e) { alert('Collection failed: ' + e.message); }
+  }
+</script>
+
+<%- include('partials/footer') %>

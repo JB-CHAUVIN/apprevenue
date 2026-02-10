@@ -1,0 +1,26 @@
+<select class="lang-select" onchange="window.location.href='/'+this.value" aria-label="Language">
+  <% theme.locales.forEach(function(l) { %>
+  <option value="<%= l %>" <%= l === locale ? 'selected' : '' %>><%= l.toUpperCase() %></option>
+  <% }); %>
+</select>
+
+<style>
+  .lang-select {
+    background: rgba(255,255,255,0.05);
+    color: var(--text-muted);
+    border: 1px solid var(--glass-border);
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    font-family: var(--font-mono);
+    cursor: pointer;
+    outline: none;
+  }
+  .lang-select:focus {
+    border-color: var(--neon-cyan);
+  }
+  .lang-select option {
+    background: #0f172a;
+    color: var(--text);
+  }
+</style>

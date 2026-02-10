@@ -1,0 +1,43 @@
+{
+  "name": "apprevenue",
+  "version": "1.0.0",
+  "description": "Unified revenue & deployment tracking dashboard (AdMob, App Store, Google Play, Stripe)",
+  "main": "src/app.js",
+  "scripts": {
+    "start": "node src/app.js",
+    "dev": "nodemon src/app.js",
+    "test": "jest --coverage",
+    "cron:run": "node src/cron.js --once",
+    "db:seed": "node src/scripts/seed.js"
+  },
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "chart.js": "^4.4.0",
+    "cookie-parser": "^1.4.6",
+    "dotenv": "^16.3.1",
+    "ejs": "^3.1.9",
+    "express": "^4.18.2",
+    "googleapis": "^128.0.0",
+    "helmet": "^7.1.0",
+    "json2csv": "^6.0.0-alpha.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^9.2.0",
+    "morgan": "^1.10.0",
+    "node-cron": "^3.0.3",
+    "node-fetch": "^2.7.0",
+    "nodemailer": "^8.0.1",
+    "stripe": "^14.0.0",
+    "winston": "^3.11.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.0.2",
+    "supertest": "^6.3.3"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "testMatch": [
+      "**/tests/**/*.test.js"
+    ]
+  }
+}

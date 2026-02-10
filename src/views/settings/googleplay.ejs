@@ -1,0 +1,54 @@
+<%- include('../partials/head') %>
+
+<div class="layout">
+  <%- include('../partials/sidebar', { apps: [], currentApp: null }) %>
+
+  <main class="main-content">
+    <div class="page-header"><h1>Connect Google Play</h1></div>
+    <% if (success) { %><div class="alert alert-success"><%= success %></div><% } %>
+    <% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>
+
+    <div class="section">
+      <h2>Setup Instructions</h2>
+      <div class="card">
+        <div class="steps">
+          <div class="step"><div class="step-number">1</div><div class="step-text">Go to <code>Google Cloud Console</code> &rarr; IAM & Admin &rarr; Service Accounts</div></div>
+          <div class="step"><div class="step-number">2</div><div class="step-text">Create a service account and grant <code>Google Play Developer API</code> access</div></div>
+          <div class="step"><div class="step-number">3</div><div class="step-text">Download the <code>JSON key file</code> and paste its content below</div></div>
+          <div class="step"><div class="step-number">4</div><div class="step-text">In Google Play Console &rarr; Settings &rarr; API access, link the service account</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Credentials</h2>
+      <div class="card">
+        <form method="POST" action="/dashboard/settings/googleplay" id="credForm">
+          <div class="form-group"><label>Service Account JSON</label><textarea name="serviceAccountJson" placeholder="Paste the entire JSON key file content here..."><%= credential.credentials?.serviceAccountJson || '' %></textarea></div>
+          <div class="form-group"><label>Package Names (comma-separated)</label><input type="text" name="packageNames" value="<%= credential.credentials?.packageNames || '' %>" placeholder="com.yourapp.one, com.yourapp.two" /></div>
+          <div style="display:flex;gap:12px;">
+            <button type="button" class="btn btn-outline" onclick="testConnection()">Test Connection</button>
+            <button type="submit" class="btn btn-neon">Save</button>
+          </div>
+        </form>
+        <div id="testResult" class="test-result"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+async function testConnection() {
+  const form = document.getElementById('credForm');
+  const data = Object.fromEntries(new FormData(form));
+  const el = document.getElementById('testResult');
+  el.className = 'test-result'; el.style.display = 'block'; el.textContent = 'Testing...';
+  try {
+    const res = await fetch('/dashboard/settings/googleplay/test', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+    const result = await res.json();
+    el.className = 'test-result ' + (result.success ? 'success' : 'error');
+    el.textContent = result.message;
+  } catch (e) { el.className = 'test-result error'; el.textContent = e.message; }
+}
+</script>
+<%- include('../partials/footer') %>

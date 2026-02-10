@@ -1,0 +1,73 @@
+{
+  "meta": {
+    "title": "AppRevenue — すべてのアプリ収益を一か所で追跡",
+    "description": "AdMob、App Store、Google Play、Stripeの収益を追跡する無料の統合ダッシュボード。モバイルアプリ開発者のためのリアルタイム分析。"
+  },
+  "nav": {
+    "features": "機能",
+    "howItWorks": "使い方",
+    "pricing": "料金",
+    "faq": "よくある質問",
+    "login": "ログイン"
+  },
+  "hero": {
+    "titleStart": "",
+    "titleHighlight": "すべての収益",
+    "titleEnd": "を一つのダッシュボードで追跡",
+    "subtitle": "AdMob、App Store Connect、Google Play、Stripeのデータを統合する無料のオープンソースダッシュボード。プラットフォームの切り替えはもう不要です。",
+    "cta": "無料で始める",
+    "ctaSecondary": "機能を見る"
+  },
+  "features": {
+    "sectionTitle": "必要なものがすべて揃っています",
+    "sectionSubtitle": "すべての収益源を一つのダッシュボードで管理",
+    "items": [
+      { "title": "AdMob分析", "description": "すべてのアプリと国の広告収益、インプレッション、クリック数、eCPMをリアルタイムで追跡します。" },
+      { "title": "App Store Connect", "description": "iOSアプリのバージョン、ビルドステータス、ダウンロード数、評価、収益を自動的に監視します。" },
+      { "title": "Google Play Console", "description": "Androidのインストール数、リリース、サブスクリプション、収益を一つの画面で追跡します。" },
+      { "title": "Stripe決済", "description": "MRR、ARR、サブスクリプション、解約率、決済分析をリアルタイムで監視します。" },
+      { "title": "CSV・APIエクスポート", "description": "すべてのデータをCSVまたはJSON形式でエクスポート。カスタム連携のための完全なREST APIを提供します。" },
+      { "title": "自動データ収集", "description": "毎日のcronジョブがデータを自動的に収集します。最新のデータが必要な時はいつでも手動収集を実行できます。" }
+    ]
+  },
+  "howItWorks": {
+    "sectionTitle": "使い方",
+    "sectionSubtitle": "3つの簡単なステップで始められます",
+    "steps": [
+      { "title": "アカウントを接続", "description": "AdMob、App Store Connect、Google Play、StripeのAPIキーを追加します。" },
+      { "title": "自動データ収集", "description": "cronシステムが毎日収益データを自動的に取得します。手動作業は一切不要です。" },
+      { "title": "分析とエクスポート", "description": "統合チャートを表示し、日付範囲でフィルタリングし、いつでもデータをエクスポートできます。" }
+    ]
+  },
+  "pricing": {
+    "sectionTitle": "料金",
+    "sectionSubtitle": "クレジットカード不要。隠れた料金はありません。",
+    "badge": "無料",
+    "price": "$0",
+    "period": "永久",
+    "features": [ "アプリ数無制限", "4つの収益源すべてに対応", "毎日の自動収集", "CSV・JSONエクスポート", "完全なREST API", "セルフホスト・プライベート" ],
+    "cta": "今すぐ始める"
+  },
+  "faq": {
+    "sectionTitle": "よくある質問",
+    "items": [
+      { "question": "AppRevenueは本当に無料ですか？", "answer": "はい。AppRevenueは100%無料でオープンソースです。ご自身のサーバーにセルフホストするため、サブスクリプション費用は一切かかりません。" },
+      { "question": "どのプラットフォームに対応していますか？", "answer": "AdMob（広告収益）、App Store Connect（iOS）、Google Play Console（Android）、Stripe（決済とサブスクリプション）に対応しています。" },
+      { "question": "データは安全ですか？", "answer": "もちろんです。すべてのデータはお客様のSQLiteデータベースにローカル保存されます。サードパーティのサーバーには一切送信されません。認証には業界標準のJWTを使用しています。" },
+      { "question": "複数のアプリを追加できますか？", "answer": "はい。好きなだけアプリを追跡できます。ダッシュボードは統合ビューを表示し、個々のアプリでフィルタリングすることもできます。" },
+      { "question": "データはどのくらいの頻度で収集されますか？", "answer": "デフォルトでは、cronジョブにより毎日午前6時にデータが収集されます。ダッシュボードからいつでも手動収集を実行することもできます。" }
+    ]
+  },
+  "footer": {
+    "description": "モバイルアプリ開発者のための統合収益追跡ツール。",
+    "product": "製品",
+    "resources": "リソース",
+    "legal": "法的情報",
+    "docs": "ドキュメント",
+    "api": "APIリファレンス",
+    "github": "GitHub",
+    "privacy": "プライバシーポリシー",
+    "terms": "利用規約",
+    "copyright": "全著作権所有。"
+  }
+}

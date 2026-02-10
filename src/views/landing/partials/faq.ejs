@@ -1,0 +1,71 @@
+<section id="faq">
+  <div class="container">
+    <h2 class="section-title"><%= t('faq.sectionTitle') %></h2>
+
+    <div class="faq-list">
+      <% i18n.faq.items.forEach(function(item, idx) { %>
+      <div class="glass faq-item">
+        <button class="faq-question" onclick="this.parentElement.classList.toggle('open')" aria-expanded="false">
+          <span><%= item.question %></span>
+          <svg class="faq-chevron" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6,9 12,15 18,9"/></svg>
+        </button>
+        <div class="faq-answer">
+          <p><%= item.answer %></p>
+        </div>
+      </div>
+      <% }); %>
+    </div>
+  </div>
+</section>
+
+<style>
+  .faq-list {
+    max-width: 700px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  .faq-item {
+    padding: 0;
+    overflow: hidden;
+  }
+  .faq-question {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    background: none;
+    border: none;
+    color: var(--text);
+    font-size: 1rem;
+    font-weight: 500;
+    font-family: var(--font-body);
+    cursor: pointer;
+    text-align: left;
+  }
+  [dir="rtl"] .faq-question { text-align: right; flex-direction: row-reverse; }
+  .faq-chevron {
+    transition: transform 0.3s;
+    flex-shrink: 0;
+    margin-left: 12px;
+    color: var(--text-muted);
+  }
+  [dir="rtl"] .faq-chevron { margin-left: 0; margin-right: 12px; }
+  .faq-item.open .faq-chevron { transform: rotate(180deg); }
+  .faq-answer {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease;
+  }
+  .faq-item.open .faq-answer {
+    max-height: 300px;
+  }
+  .faq-answer p {
+    padding: 0 24px 20px;
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.7;
+  }
+</style>

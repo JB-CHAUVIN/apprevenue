@@ -1,0 +1,73 @@
+{
+  "meta": {
+    "title": "AppRevenue — Rastrea Todos Tus Ingresos de Apps en Un Solo Lugar",
+    "description": "Panel unificado y gratuito para rastrear ingresos de AdMob, App Store, Google Play y Stripe. Analíticas en tiempo real para desarrolladores de aplicaciones móviles."
+  },
+  "nav": {
+    "features": "Características",
+    "howItWorks": "Cómo Funciona",
+    "pricing": "Precios",
+    "faq": "Preguntas Frecuentes",
+    "login": "Iniciar Sesión"
+  },
+  "hero": {
+    "titleStart": "Rastrea ",
+    "titleHighlight": "Todos Tus Ingresos",
+    "titleEnd": " en Un Solo Panel",
+    "subtitle": "El panel gratuito y de código abierto que unifica los datos de AdMob, App Store Connect, Google Play y Stripe. Deja de alternar entre plataformas.",
+    "cta": "Comenzar Gratis",
+    "ctaSecondary": "Ver Características"
+  },
+  "features": {
+    "sectionTitle": "Todo Lo Que Necesitas",
+    "sectionSubtitle": "Un panel para controlar todas tus fuentes de ingresos",
+    "items": [
+      { "title": "Analíticas de AdMob", "description": "Rastrea ingresos publicitarios, impresiones, clics y eCPM en todas tus apps y países en tiempo real." },
+      { "title": "App Store Connect", "description": "Monitorea versiones de apps iOS, estados de compilación, descargas, valoraciones e ingresos automáticamente." },
+      { "title": "Google Play Console", "description": "Rastrea instalaciones de Android, lanzamientos, suscripciones e ingresos desde una sola vista." },
+      { "title": "Pagos de Stripe", "description": "Monitorea MRR, ARR, suscripciones, tasa de cancelación y analíticas de pagos en tiempo real." },
+      { "title": "Exportación CSV y API", "description": "Exporta todos tus datos en formato CSV o JSON. API REST completa para integraciones personalizadas." },
+      { "title": "Recopilación Automatizada", "description": "Tareas cron diarias recopilan datos automáticamente. Activa la recopilación manual en cualquier momento que necesites datos actualizados." }
+    ]
+  },
+  "howItWorks": {
+    "sectionTitle": "Cómo Funciona",
+    "sectionSubtitle": "En funcionamiento en tres simples pasos",
+    "steps": [
+      { "title": "Conecta Tus Cuentas", "description": "Añade tus claves API para AdMob, App Store Connect, Google Play y Stripe." },
+      { "title": "Recopilación Automática de Datos", "description": "Nuestro sistema cron obtiene tus datos de ingresos diariamente. No se requiere trabajo manual." },
+      { "title": "Analiza y Exporta", "description": "Visualiza gráficos unificados, filtra por rango de fechas y exporta datos en cualquier momento." }
+    ]
+  },
+  "pricing": {
+    "sectionTitle": "Precios",
+    "sectionSubtitle": "No se requiere tarjeta de crédito. Sin costes ocultos.",
+    "badge": "GRATIS",
+    "price": "$0",
+    "period": "para siempre",
+    "features": [ "Apps ilimitadas", "Las 4 fuentes de ingresos", "Recopilación diaria automatizada", "Exportación CSV y JSON", "API REST completa", "Autoalojado y privado" ],
+    "cta": "Comenzar Ahora"
+  },
+  "faq": {
+    "sectionTitle": "Preguntas Frecuentes",
+    "items": [
+      { "question": "¿AppRevenue es realmente gratis?", "answer": "Sí. AppRevenue es 100% gratuito y de código abierto. Lo alojas tú mismo en tu propio servidor, por lo que no hay costes de suscripción." },
+      { "question": "¿Qué plataformas son compatibles?", "answer": "Soportamos AdMob (ingresos publicitarios), App Store Connect (iOS), Google Play Console (Android) y Stripe (pagos y suscripciones)." },
+      { "question": "¿Mis datos están seguros?", "answer": "Absolutamente. Todos los datos se almacenan localmente en tu propia base de datos SQLite. Nada se envía a servidores de terceros. La autenticación utiliza JWT, un estándar de la industria." },
+      { "question": "¿Puedo añadir múltiples apps?", "answer": "Sí. Puedes rastrear tantas apps como quieras. El panel muestra una vista unificada y te permite filtrar por aplicación individual." },
+      { "question": "¿Con qué frecuencia se recopilan los datos?", "answer": "Por defecto, los datos se recopilan diariamente a las 6 AM mediante una tarea cron. También puedes activar la recopilación manual en cualquier momento desde el panel." }
+    ]
+  },
+  "footer": {
+    "description": "Seguimiento unificado de ingresos para desarrolladores de aplicaciones móviles.",
+    "product": "Producto",
+    "resources": "Recursos",
+    "legal": "Legal",
+    "docs": "Documentación",
+    "api": "Referencia de API",
+    "github": "GitHub",
+    "privacy": "Política de Privacidad",
+    "terms": "Términos de Servicio",
+    "copyright": "Todos los derechos reservados."
+  }
+}

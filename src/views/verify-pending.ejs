@@ -1,0 +1,15 @@
+<%- include('partials/head') %>
+
+<div class="auth-box" style="text-align:center;">
+  <h2>Check Your Email</h2>
+  <div style="font-size:48px;margin:24px 0;">&#9993;</div>
+  <p style="color:var(--text-muted);margin-bottom:16px;">We've sent a verification link to:</p>
+  <p style="font-weight:600;font-size:16px;color:var(--neon-cyan);margin-bottom:24px;"><%= email %></p>
+  <p style="color:var(--text-muted);font-size:14px;margin-bottom:24px;">Click the link in the email to verify your account. The link expires in 24 hours.</p>
+  <p style="color:var(--text-muted);font-size:13px;">Didn't receive the email? Check your spam folder.</p>
+  <div class="auth-link" style="margin-top:24px;">
+    <a href="/login">Back to Sign In</a>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

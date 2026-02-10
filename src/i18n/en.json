@@ -1,0 +1,122 @@
+{
+  "meta": {
+    "title": "AppRevenue — Track All Your App Revenue in One Place",
+    "description": "Free unified dashboard for tracking AdMob, App Store, Google Play, and Stripe revenue. Real-time analytics for mobile app developers."
+  },
+  "nav": {
+    "features": "Features",
+    "howItWorks": "How It Works",
+    "pricing": "Pricing",
+    "faq": "FAQ",
+    "login": "Sign In"
+  },
+  "hero": {
+    "titleStart": "Track ",
+    "titleHighlight": "All Your Revenue",
+    "titleEnd": " in One Dashboard",
+    "subtitle": "The free, open-source dashboard that unifies AdMob, App Store Connect, Google Play, and Stripe data. Stop switching between platforms.",
+    "cta": "Get Started Free",
+    "ctaSecondary": "See Features"
+  },
+  "features": {
+    "sectionTitle": "Everything You Need",
+    "sectionSubtitle": "One dashboard to rule all your revenue streams",
+    "items": [
+      {
+        "title": "AdMob Analytics",
+        "description": "Track ad revenue, impressions, clicks, and eCPM across all your apps and countries in real time."
+      },
+      {
+        "title": "App Store Connect",
+        "description": "Monitor iOS app versions, build statuses, downloads, ratings, and proceeds automatically."
+      },
+      {
+        "title": "Google Play Console",
+        "description": "Track Android installs, releases, subscriptions, and revenue from a single view."
+      },
+      {
+        "title": "Stripe Payments",
+        "description": "Monitor MRR, ARR, subscriptions, churn rate, and payment analytics in real time."
+      },
+      {
+        "title": "CSV & API Export",
+        "description": "Export all your data in CSV or JSON format. Full REST API for custom integrations."
+      },
+      {
+        "title": "Automated Collection",
+        "description": "Daily cron jobs collect data automatically. Trigger manual collection anytime you need fresh numbers."
+      }
+    ]
+  },
+  "howItWorks": {
+    "sectionTitle": "How It Works",
+    "sectionSubtitle": "Up and running in three simple steps",
+    "steps": [
+      {
+        "title": "Connect Your Accounts",
+        "description": "Add your API keys for AdMob, App Store Connect, Google Play, and Stripe."
+      },
+      {
+        "title": "Automatic Data Collection",
+        "description": "Our cron system fetches your revenue data daily. No manual work required."
+      },
+      {
+        "title": "Analyze & Export",
+        "description": "View unified charts, filter by date range, and export data anytime."
+      }
+    ]
+  },
+  "pricing": {
+    "sectionTitle": "Pricing",
+    "sectionSubtitle": "No credit card required. No hidden fees.",
+    "badge": "FREE",
+    "price": "$0",
+    "period": "forever",
+    "features": [
+      "Unlimited apps",
+      "All 4 revenue sources",
+      "Daily automated collection",
+      "CSV & JSON export",
+      "Full REST API",
+      "Self-hosted & private"
+    ],
+    "cta": "Start Now"
+  },
+  "faq": {
+    "sectionTitle": "Frequently Asked Questions",
+    "items": [
+      {
+        "question": "Is AppRevenue really free?",
+        "answer": "Yes. AppRevenue is 100% free and open source. You self-host it on your own server, so there are no subscription costs."
+      },
+      {
+        "question": "What platforms are supported?",
+        "answer": "We support AdMob (ad revenue), App Store Connect (iOS), Google Play Console (Android), and Stripe (payments and subscriptions)."
+      },
+      {
+        "question": "Is my data secure?",
+        "answer": "Absolutely. All data is stored locally in your own SQLite database. Nothing is sent to third-party servers. Authentication uses industry-standard JWT."
+      },
+      {
+        "question": "Can I add multiple apps?",
+        "answer": "Yes. You can track as many apps as you want. The dashboard shows a unified view and lets you filter by individual app."
+      },
+      {
+        "question": "How often is data collected?",
+        "answer": "By default, data is collected daily at 6 AM via a cron job. You can also trigger manual collection at any time from the dashboard."
+      }
+    ]
+  },
+  "footer": {
+    "description": "Unified revenue tracking for mobile app developers.",
+    "product": "Product",
+    "resources": "Resources",
+    "legal": "Legal",
+    "docs": "Documentation",
+    "api": "API Reference",
+    "github": "GitHub",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service",
+    "copyright": "All rights reserved."
+  }
+}

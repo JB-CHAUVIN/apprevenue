@@ -1,0 +1,80 @@
+<section id="how-it-works">
+  <div class="container">
+    <h2 class="section-title"><%= t('howItWorks.sectionTitle') %></h2>
+    <p class="section-subtitle"><%= t('howItWorks.sectionSubtitle') %></p>
+
+    <div class="steps-row">
+      <% const steps = i18n.howItWorks.steps;
+         steps.forEach(function(step, idx) { %>
+      <div class="step-item">
+        <div class="step-circle"><%= idx + 1 %></div>
+        <h3 class="step-title"><%= step.title %></h3>
+        <p class="step-desc"><%= step.description %></p>
+      </div>
+      <% if (idx < steps.length - 1) { %>
+      <div class="step-connector"></div>
+      <% }
+      }); %>
+    </div>
+  </div>
+</section>
+
+<style>
+  .steps-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0;
+  }
+  .step-item {
+    flex: 1;
+    max-width: 280px;
+    text-align: center;
+    padding: 0 16px;
+  }
+  .step-circle {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    border: 2px solid var(--neon-cyan);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: var(--font-display);
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--neon-cyan);
+    margin: 0 auto 16px;
+    background: rgba(0, 240, 255, 0.05);
+  }
+  .step-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+  .step-desc {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+  .step-connector {
+    width: 80px;
+    border-top: 2px dashed var(--glass-border);
+    margin-top: 28px;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 768px) {
+    .steps-row {
+      flex-direction: column;
+      align-items: center;
+      gap: 32px;
+    }
+    .step-connector {
+      width: 2px;
+      height: 40px;
+      border-top: none;
+      border-left: 2px dashed var(--glass-border);
+      margin-top: 0;
+    }
+  }
+</style>

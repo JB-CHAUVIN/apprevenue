@@ -1,0 +1,51 @@
+<%- include('../partials/head') %>
+
+<div class="layout">
+  <%- include('../partials/sidebar', { apps: [], currentApp: null }) %>
+
+  <main class="main-content">
+    <div class="page-header"><h1>Connect Stripe</h1></div>
+    <% if (success) { %><div class="alert alert-success"><%= success %></div><% } %>
+    <% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>
+
+    <div class="section">
+      <h2>Setup Instructions</h2>
+      <div class="card">
+        <div class="steps">
+          <div class="step"><div class="step-number">1</div><div class="step-text">Go to <code>Stripe Dashboard</code> &rarr; Developers &rarr; API keys</div></div>
+          <div class="step"><div class="step-number">2</div><div class="step-text">Copy your <code>Secret Key</code> (starts with <code>sk_live_</code> or <code>sk_test_</code>)</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Credentials</h2>
+      <div class="card">
+        <form method="POST" action="/dashboard/settings/stripe" id="credForm">
+          <div class="form-group"><label>Secret Key</label><input type="password" name="secretKey" value="<%= credential.credentials?.secretKey || '' %>" placeholder="sk_live_..." /></div>
+          <div style="display:flex;gap:12px;">
+            <button type="button" class="btn btn-outline" onclick="testConnection()">Test Connection</button>
+            <button type="submit" class="btn btn-neon">Save</button>
+          </div>
+        </form>
+        <div id="testResult" class="test-result"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+async function testConnection() {
+  const form = document.getElementById('credForm');
+  const data = Object.fromEntries(new FormData(form));
+  const el = document.getElementById('testResult');
+  el.className = 'test-result'; el.style.display = 'block'; el.textContent = 'Testing...';
+  try {
+    const res = await fetch('/dashboard/settings/stripe/test', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+    const result = await res.json();
+    el.className = 'test-result ' + (result.success ? 'success' : 'error');
+    el.textContent = result.message;
+  } catch (e) { el.className = 'test-result error'; el.textContent = e.message; }
+}
+</script>
+<%- include('../partials/footer') %>

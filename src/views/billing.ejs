@@ -1,0 +1,69 @@
+<%- include('partials/head') %>
+
+<div class="layout">
+  <%- include('partials/sidebar', { apps: [], currentApp: null }) %>
+
+  <main class="main-content">
+    <div class="page-header">
+      <h1>Billing</h1>
+    </div>
+
+    <% if (typeof error !== 'undefined' && error) { %><div class="alert alert-error"><%= error %></div><% } %>
+    <% if (typeof req !== 'undefined' && req.query && req.query.success === '1') { %><div class="alert alert-success">Welcome to Pro! Your subscription is active.</div><% } %>
+
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:24px;">
+      <!-- Current Plan -->
+      <div class="card" style="border-top:3px solid <%= user.plan === 'pro' ? 'var(--neon-cyan)' : 'var(--glass-border)' %>;">
+        <h3 style="font-family:var(--font-display);font-size:14px;margin-bottom:16px;">Current Plan</h3>
+        <div style="font-family:var(--font-display);font-size:32px;font-weight:700;margin-bottom:8px;">
+          <span class="<%= user.plan === 'pro' ? 'gradient-text' : '' %>"><%= user.plan === 'pro' ? 'Pro' : 'Free' %></span>
+        </div>
+        <% if (user.plan === 'free') { %>
+          <p style="color:var(--text-muted);font-size:14px;margin-bottom:20px;">2 apps max, daily data sync</p>
+        <% } else { %>
+          <p style="color:var(--text-muted);font-size:14px;margin-bottom:20px;">Unlimited apps, hourly data sync</p>
+          <form method="POST" action="/dashboard/billing/portal">
+            <button type="submit" class="btn btn-outline btn-sm">Manage Subscription</button>
+          </form>
+        <% } %>
+      </div>
+
+      <!-- Pro Plan -->
+      <% if (user.plan === 'free') { %>
+      <div class="card" style="border-top:3px solid var(--neon-cyan);">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:16px;">
+          <h3 style="font-family:var(--font-display);font-size:14px;">Pro Plan</h3>
+          <span class="badge badge-pro">PRO</span>
+        </div>
+        <div style="margin-bottom:20px;">
+          <span style="font-family:var(--font-display);font-size:40px;font-weight:800;" class="gradient-text">&euro;9</span>
+          <span style="color:var(--text-muted);">/ month</span>
+        </div>
+        <ul style="list-style:none;margin-bottom:24px;">
+          <li style="display:flex;align-items:center;gap:8px;padding:6px 0;color:var(--text-muted);font-size:14px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--neon-cyan)" stroke-width="2"><polyline points="20,6 9,17 4,12"/></svg>
+            Unlimited apps
+          </li>
+          <li style="display:flex;align-items:center;gap:8px;padding:6px 0;color:var(--text-muted);font-size:14px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--neon-cyan)" stroke-width="2"><polyline points="20,6 9,17 4,12"/></svg>
+            Hourly data sync
+          </li>
+          <li style="display:flex;align-items:center;gap:8px;padding:6px 0;color:var(--text-muted);font-size:14px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--neon-cyan)" stroke-width="2"><polyline points="20,6 9,17 4,12"/></svg>
+            All 4 revenue sources
+          </li>
+          <li style="display:flex;align-items:center;gap:8px;padding:6px 0;color:var(--text-muted);font-size:14px;">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--neon-cyan)" stroke-width="2"><polyline points="20,6 9,17 4,12"/></svg>
+            Priority support
+          </li>
+        </ul>
+        <form method="POST" action="/dashboard/billing/checkout">
+          <button type="submit" class="btn btn-neon" style="width:100%;">Upgrade to Pro</button>
+        </form>
+      </div>
+      <% } %>
+    </div>
+  </main>
+</div>
+
+<%- include('partials/footer') %>

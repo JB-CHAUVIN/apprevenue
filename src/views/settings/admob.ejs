@@ -1,0 +1,60 @@
+<%- include('../partials/head') %>
+
+<div class="layout">
+  <%- include('../partials/sidebar', { apps: [], currentApp: null }) %>
+
+  <main class="main-content">
+    <div class="page-header">
+      <h1>Connect AdMob</h1>
+    </div>
+
+    <% if (success) { %><div class="alert alert-success"><%= success %></div><% } %>
+    <% if (error) { %><div class="alert alert-error"><%= error %></div><% } %>
+
+    <div class="section">
+      <h2>Setup Instructions</h2>
+      <div class="card">
+        <div class="steps">
+          <div class="step"><div class="step-number">1</div><div class="step-text">Go to <code>Google Cloud Console</code> &rarr; APIs & Services &rarr; Credentials</div></div>
+          <div class="step"><div class="step-number">2</div><div class="step-text">Create an <code>OAuth 2.0 Client ID</code> (Web application type)</div></div>
+          <div class="step"><div class="step-number">3</div><div class="step-text">Copy the <code>Client ID</code> and <code>Client Secret</code></div></div>
+          <div class="step"><div class="step-number">4</div><div class="step-text">Generate a <code>Refresh Token</code> using the OAuth Playground (scope: <code>https://www.googleapis.com/auth/admob.report</code>)</div></div>
+          <div class="step"><div class="step-number">5</div><div class="step-text">Enter your <code>Publisher ID</code> (found in AdMob &rarr; Account &rarr; Publisher ID, starts with <code>pub-</code>)</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="section">
+      <h2>Credentials</h2>
+      <div class="card">
+        <form method="POST" action="/dashboard/settings/admob" id="credForm">
+          <div class="form-group"><label>Client ID</label><input type="text" name="clientId" value="<%= credential.credentials?.clientId || '' %>" placeholder="xxxx.apps.googleusercontent.com" /></div>
+          <div class="form-group"><label>Client Secret</label><input type="text" name="clientSecret" value="<%= credential.credentials?.clientSecret || '' %>" placeholder="GOCSPX-..." /></div>
+          <div class="form-group"><label>Refresh Token</label><input type="text" name="refreshToken" value="<%= credential.credentials?.refreshToken || '' %>" placeholder="1//..." /></div>
+          <div class="form-group"><label>Publisher ID</label><input type="text" name="publisherId" value="<%= credential.credentials?.publisherId || '' %>" placeholder="pub-XXXXXXXXXXXXXXXX" /></div>
+          <div style="display:flex;gap:12px;">
+            <button type="button" class="btn btn-outline" onclick="testConnection()">Test Connection</button>
+            <button type="submit" class="btn btn-neon">Save</button>
+          </div>
+        </form>
+        <div id="testResult" class="test-result"></div>
+      </div>
+    </div>
+  </main>
+</div>
+
+<script>
+async function testConnection() {
+  const form = document.getElementById('credForm');
+  const data = Object.fromEntries(new FormData(form));
+  const el = document.getElementById('testResult');
+  el.className = 'test-result'; el.style.display = 'block'; el.textContent = 'Testing...';
+  try {
+    const res = await fetch('/dashboard/settings/admob/test', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
+    const result = await res.json();
+    el.className = 'test-result ' + (result.success ? 'success' : 'error');
+    el.textContent = result.message;
+  } catch (e) { el.className = 'test-result error'; el.textContent = e.message; }
+}
+</script>
+<%- include('../partials/footer') %>

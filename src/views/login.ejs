@@ -1,0 +1,28 @@
+<%- include('partials/head') %>
+
+<div class="auth-box">
+  <h2><%= typeof siteName !== 'undefined' ? siteName : 'AppRevenue' %></h2>
+  <p class="subtitle">Sign in to your dashboard</p>
+  <% if (typeof verified !== 'undefined' && verified) { %>
+    <div class="alert alert-success">Email verified successfully! You can now sign in.</div>
+  <% } %>
+  <% if (error) { %>
+    <div class="alert alert-error"><%= error %></div>
+  <% } %>
+  <form method="POST" action="/login">
+    <div class="form-group">
+      <label for="email">Email</label>
+      <input type="email" id="email" name="email" required autocomplete="email" placeholder="you@example.com" />
+    </div>
+    <div class="form-group">
+      <label for="password">Password</label>
+      <input type="password" id="password" name="password" required autocomplete="current-password" placeholder="Enter your password" />
+    </div>
+    <button type="submit" class="btn btn-neon" style="width:100%;margin-top:8px;">Sign In</button>
+  </form>
+  <div class="auth-link">
+    Don't have an account? <a href="/register">Register</a>
+  </div>
+</div>
+
+<%- include('partials/footer') %>

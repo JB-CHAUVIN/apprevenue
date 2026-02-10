@@ -1,0 +1,73 @@
+{
+  "meta": {
+    "title": "AppRevenue — 在一个地方追踪您所有的应用收入",
+    "description": "免费的统一仪表盘，用于追踪 AdMob、App Store、Google Play 和 Stripe 收入。为移动应用开发者提供实时分析。"
+  },
+  "nav": {
+    "features": "功能",
+    "howItWorks": "工作原理",
+    "pricing": "定价",
+    "faq": "常见问题",
+    "login": "登录"
+  },
+  "hero": {
+    "titleStart": "在一个仪表盘中",
+    "titleHighlight": "追踪所有收入",
+    "titleEnd": "",
+    "subtitle": "免费开源的仪表盘，统一整合 AdMob、App Store Connect、Google Play 和 Stripe 数据。告别在多个平台之间来回切换。",
+    "cta": "免费开始使用",
+    "ctaSecondary": "查看功能"
+  },
+  "features": {
+    "sectionTitle": "您所需的一切",
+    "sectionSubtitle": "一个仪表盘掌控您所有的收入来源",
+    "items": [
+      { "title": "AdMob 分析", "description": "实时追踪所有应用和国家的广告收入、展示次数、点击量和 eCPM。" },
+      { "title": "App Store Connect", "description": "自动监控 iOS 应用版本、构建状态、下载量、评分和收益。" },
+      { "title": "Google Play Console", "description": "在单一视图中追踪 Android 安装量、发布版本、订阅和收入。" },
+      { "title": "Stripe 支付", "description": "实时监控 MRR、ARR、订阅、流失率和支付分析。" },
+      { "title": "CSV 和 API 导出", "description": "以 CSV 或 JSON 格式导出所有数据。完整的 REST API 支持自定义集成。" },
+      { "title": "自动化数据采集", "description": "每日定时任务自动采集数据。随时可手动触发采集以获取最新数据。" }
+    ]
+  },
+  "howItWorks": {
+    "sectionTitle": "工作原理",
+    "sectionSubtitle": "三个简单步骤即可启动运行",
+    "steps": [
+      { "title": "连接您的账户", "description": "添加您的 AdMob、App Store Connect、Google Play 和 Stripe API 密钥。" },
+      { "title": "自动数据采集", "description": "我们的定时任务系统每天自动获取您的收入数据。无需手动操作。" },
+      { "title": "分析与导出", "description": "查看统一图表，按日期范围筛选，随时导出数据。" }
+    ]
+  },
+  "pricing": {
+    "sectionTitle": "定价",
+    "sectionSubtitle": "无需信用卡。没有隐藏费用。",
+    "badge": "免费",
+    "price": "$0",
+    "period": "永久",
+    "features": [ "无限应用", "全部 4 个收入来源", "每日自动采集", "CSV 和 JSON 导出", "完整 REST API", "自托管且私密" ],
+    "cta": "立即开始"
+  },
+  "faq": {
+    "sectionTitle": "常见问题",
+    "items": [
+      { "question": "AppRevenue 真的免费吗？", "answer": "是的。AppRevenue 是 100% 免费且开源的。您将其自托管在自己的服务器上，因此没有任何订阅费用。" },
+      { "question": "支持哪些平台？", "answer": "我们支持 AdMob（广告收入）、App Store Connect（iOS）、Google Play Console（Android）和 Stripe（支付与订阅）。" },
+      { "question": "我的数据安全吗？", "answer": "绝对安全。所有数据都存储在您自己的 SQLite 数据库中。没有任何数据会发送到第三方服务器。身份验证采用行业标准的 JWT。" },
+      { "question": "我可以添加多个应用吗？", "answer": "可以。您可以追踪任意数量的应用。仪表盘显示统一视图，并允许您按单个应用进行筛选。" },
+      { "question": "数据多久采集一次？", "answer": "默认情况下，数据通过定时任务每天早上 6 点自动采集。您也可以随时从仪表盘手动触发采集。" }
+    ]
+  },
+  "footer": {
+    "description": "为移动应用开发者提供统一的收入追踪。",
+    "product": "产品",
+    "resources": "资源",
+    "legal": "法律信息",
+    "docs": "文档",
+    "api": "API 参考",
+    "github": "GitHub",
+    "privacy": "隐私政策",
+    "terms": "服务条款",
+    "copyright": "保留所有权利。"
+  }
+}

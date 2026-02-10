@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="<%= locale %>" <% if (isRtl) { %>dir="rtl"<% } %>>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= t('meta.title') %></title>
+  <meta name="description" content="<%= t('meta.description') %>">
+
+  <!-- Open Graph -->
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="<%= t('meta.title') %>">
+  <meta property="og:description" content="<%= t('meta.description') %>">
+  <meta property="og:url" content="<%= theme.siteUrl %>/<%= locale %>">
+  <meta property="og:site_name" content="<%= siteName %>">
+
+  <!-- Twitter -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="<%= t('meta.title') %>">
+  <meta name="twitter:description" content="<%= t('meta.description') %>">
+
+  <!-- Canonical + hreflang -->
+  <link rel="canonical" href="<%= theme.siteUrl %>/<%= locale %>">
+  <% theme.locales.forEach(function(l) { %>
+  <link rel="alternate" hreflang="<%= l %>" href="<%= theme.siteUrl %>/<%= l %>">
+  <% }); %>
+  <link rel="alternate" hreflang="x-default" href="<%= theme.siteUrl %>/en">
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "SoftwareApplication",
+    "name": "<%= siteName %>",
+    "description": "<%= t('meta.description') %>",
+    "url": "<%= theme.siteUrl %>",
+    "applicationCategory": "BusinessApplication",
+    "operatingSystem": "Web",
+    "offers": {
+      "@type": "Offer",
+      "price": "0",
+      "priceCurrency": "USD"
+    }
+  }
+  </script>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="<%= theme.fonts.googleUrl %>" rel="stylesheet">
+
+  <style>
+    /* === CSS Variables from theme === */
+    :root {
+      --bg-dark: <%= theme.colors.bgDark %>;
+      --bg-grid: <%= theme.colors.bgGrid %>;
+      --neon-cyan: <%= theme.colors.neonCyan %>;
+      --neon-purple: <%= theme.colors.neonPurple %>;
+      --neon-pink: <%= theme.colors.neonPink %>;
+      --glass-white: <%= theme.colors.glassWhite %>;
+      --glass-border: <%= theme.colors.glassBorder %>;
+      --glass-blur: <%= theme.colors.glassBlur %>;
+      --text: <%= theme.colors.text %>;
+      --text-muted: <%= theme.colors.textMuted %>;
+      --font-display: '<%= theme.fonts.display %>', sans-serif;
+      --font-body: '<%= theme.fonts.body %>', sans-serif;
+      --font-mono: '<%= theme.fonts.mono %>', monospace;
+    }
+
+    /* === Reset === */
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    /* === Body + Grid Background === */
+    body {
+      font-family: var(--font-body);
+      background: var(--bg-dark);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+      position: relative;
+    }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: radial-gradient(var(--bg-grid) 1px, transparent 1px);
+      background-size: 30px 30px;
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* === Layout === */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
+      position: relative;
+      z-index: 1;
+    }
+    section {
+      padding: 80px 0;
+      position: relative;
+      z-index: 1;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      font-weight: 700;
+      text-align: center;
+      margin-bottom: 12px;
+      background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .section-subtitle {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      margin-bottom: 48px;
+    }
+
+    /* === Glass Card === */
+    .glass {
+      background: var(--glass-white);
+      backdrop-filter: blur(var(--glass-blur));
+      -webkit-backdrop-filter: blur(var(--glass-blur));
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 32px;
+    }
+    @supports not (backdrop-filter: blur(1px)) {
+      .glass {
+        background: rgba(15, 23, 42, 0.95);
+      }
+    }
+
+    /* === Buttons === */
+    .btn-neon {
+      display: inline-block;
+      padding: 14px 32px;
+      border: none;
+      border-radius: 12px;
+      font-family: var(--font-body);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--bg-dark);
+      background: var(--neon-cyan);
+      cursor: pointer;
+      text-decoration: none;
+      transition: box-shadow 0.3s, transform 0.2s;
+    }
+    .btn-neon:hover {
+      box-shadow: 0 0 20px rgba(0, 240, 255, 0.5), 0 0 40px rgba(0, 240, 255, 0.2);
+      transform: translateY(-2px);
+    }
+    .btn-outline-neon {
+      display: inline-block;
+      padding: 14px 32px;
+      border: 1px solid var(--neon-cyan);
+      border-radius: 12px;
+      font-family: var(--font-body);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--neon-cyan);
+      background: transparent;
+      cursor: pointer;
+      text-decoration: none;
+      transition: box-shadow 0.3s, transform 0.2s, background 0.3s;
+    }
+    .btn-outline-neon:hover {
+      background: rgba(0, 240, 255, 0.1);
+      box-shadow: 0 0 15px rgba(0, 240, 255, 0.3);
+      transform: translateY(-2px);
+    }
+
+    /* === Gradient Text Utility === */
+    .gradient-text {
+      background: linear-gradient(135deg, var(--neon-cyan), var(--neon-purple));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    /* === Neon accent borders === */
+    .accent-cyan { border-top: 2px solid var(--neon-cyan); }
+    .accent-purple { border-top: 2px solid var(--neon-purple); }
+    .accent-pink { border-top: 2px solid var(--neon-pink); }
+
+    /* === RTL Support === */
+    [dir="rtl"] { direction: rtl; text-align: right; }
+    [dir="rtl"] .nav-links { flex-direction: row-reverse; }
+    [dir="rtl"] .hero-buttons { flex-direction: row-reverse; }
+
+    /* === Responsive === */
+    @media (max-width: 768px) {
+      .section-title { font-size: 1.6rem; }
+      section { padding: 48px 0; }
+      .container { padding: 0 16px; }
+      .glass { padding: 20px; }
+    }
+    @media (max-width: 640px) {
+      .btn-neon, .btn-outline-neon {
+        padding: 12px 24px;
+        font-size: 0.9rem;
+      }
+    }
+  </style>
+</head>
+<body>

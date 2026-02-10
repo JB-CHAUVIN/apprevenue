@@ -1,0 +1,73 @@
+{
+  "meta": {
+    "title": "AppRevenue — Acompanhe Toda a Receita dos Seus Apps em Um Só Lugar",
+    "description": "Painel unificado e gratuito para acompanhar receitas do AdMob, App Store, Google Play e Stripe. Análises em tempo real para desenvolvedores de aplicativos móveis."
+  },
+  "nav": {
+    "features": "Funcionalidades",
+    "howItWorks": "Como Funciona",
+    "pricing": "Preços",
+    "faq": "FAQ",
+    "login": "Entrar"
+  },
+  "hero": {
+    "titleStart": "Acompanhe ",
+    "titleHighlight": "Toda a Sua Receita",
+    "titleEnd": " em Um Único Painel",
+    "subtitle": "O painel gratuito e de código aberto que unifica os dados do AdMob, App Store Connect, Google Play e Stripe. Pare de alternar entre plataformas.",
+    "cta": "Comece Grátis",
+    "ctaSecondary": "Ver Funcionalidades"
+  },
+  "features": {
+    "sectionTitle": "Tudo o Que Você Precisa",
+    "sectionSubtitle": "Um painel para gerenciar todas as suas fontes de receita",
+    "items": [
+      { "title": "Análises do AdMob", "description": "Acompanhe receita de anúncios, impressões, cliques e eCPM em todos os seus apps e países em tempo real." },
+      { "title": "App Store Connect", "description": "Monitore versões de apps iOS, status de builds, downloads, avaliações e receitas automaticamente." },
+      { "title": "Google Play Console", "description": "Acompanhe instalações Android, lançamentos, assinaturas e receita em uma única visualização." },
+      { "title": "Pagamentos Stripe", "description": "Monitore MRR, ARR, assinaturas, taxa de cancelamento e análises de pagamentos em tempo real." },
+      { "title": "Exportação CSV e API", "description": "Exporte todos os seus dados em formato CSV ou JSON. API REST completa para integrações personalizadas." },
+      { "title": "Coleta Automatizada", "description": "Tarefas agendadas diárias coletam dados automaticamente. Acione a coleta manual sempre que precisar de números atualizados." }
+    ]
+  },
+  "howItWorks": {
+    "sectionTitle": "Como Funciona",
+    "sectionSubtitle": "Pronto para usar em três passos simples",
+    "steps": [
+      { "title": "Conecte Suas Contas", "description": "Adicione suas chaves de API do AdMob, App Store Connect, Google Play e Stripe." },
+      { "title": "Coleta Automática de Dados", "description": "Nosso sistema de tarefas agendadas busca seus dados de receita diariamente. Nenhum trabalho manual necessário." },
+      { "title": "Analise e Exporte", "description": "Visualize gráficos unificados, filtre por período e exporte dados a qualquer momento." }
+    ]
+  },
+  "pricing": {
+    "sectionTitle": "Preços",
+    "sectionSubtitle": "Sem necessidade de cartão de crédito. Sem taxas ocultas.",
+    "badge": "GRÁTIS",
+    "price": "$0",
+    "period": "para sempre",
+    "features": ["Apps ilimitados", "Todas as 4 fontes de receita", "Coleta automatizada diária", "Exportação CSV e JSON", "API REST completa", "Auto-hospedado e privado"],
+    "cta": "Comece Agora"
+  },
+  "faq": {
+    "sectionTitle": "Perguntas Frequentes",
+    "items": [
+      { "question": "O AppRevenue é realmente gratuito?", "answer": "Sim. O AppRevenue é 100% gratuito e de código aberto. Você o hospeda no seu próprio servidor, então não há custos de assinatura." },
+      { "question": "Quais plataformas são suportadas?", "answer": "Suportamos AdMob (receita de anúncios), App Store Connect (iOS), Google Play Console (Android) e Stripe (pagamentos e assinaturas)." },
+      { "question": "Meus dados estão seguros?", "answer": "Com certeza. Todos os dados são armazenados localmente no seu próprio banco de dados SQLite. Nada é enviado para servidores de terceiros. A autenticação utiliza o padrão JWT da indústria." },
+      { "question": "Posso adicionar vários apps?", "answer": "Sim. Você pode acompanhar quantos apps quiser. O painel mostra uma visão unificada e permite filtrar por app individual." },
+      { "question": "Com que frequência os dados são coletados?", "answer": "Por padrão, os dados são coletados diariamente às 6h da manhã por meio de uma tarefa agendada. Você também pode acionar a coleta manual a qualquer momento pelo painel." }
+    ]
+  },
+  "footer": {
+    "description": "Acompanhamento unificado de receitas para desenvolvedores de aplicativos móveis.",
+    "product": "Produto",
+    "resources": "Recursos",
+    "legal": "Jurídico",
+    "docs": "Documentação",
+    "api": "Referência da API",
+    "github": "GitHub",
+    "privacy": "Política de Privacidade",
+    "terms": "Termos de Serviço",
+    "copyright": "Todos os direitos reservados."
+  }
+}
