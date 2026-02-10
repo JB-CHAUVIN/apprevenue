@@ -4,35 +4,77 @@ const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 const config = require('../src/config');
 
-// Mock models
+// Mock Mongoose models
 jest.mock('../src/models', () => {
-  const { Sequelize } = require('sequelize');
-  const sequelize = new Sequelize('sqlite::memory:', { logging: false });
+  const mockFind = jest.fn().mockReturnValue({
+    sort: jest.fn().mockReturnValue({
+      limit: jest.fn().mockReturnValue({
+        lean: jest.fn().mockResolvedValue([]),
+      }),
+    }),
+  });
 
-  const mockFindAll = jest.fn().mockResolvedValue([]);
-  const mockCreate = jest.fn().mockResolvedValue({});
-  const mockFindByPk = jest.fn().mockResolvedValue(null);
+  const mockAggregate = jest.fn().mockResolvedValue([]);
+
+  const mockFindById = jest.fn().mockReturnValue({
+    lean: jest.fn().mockResolvedValue({
+      _id: { toString: () => 'user123' },
+      email: 'admin@test.com',
+      plan: 'free',
+      displayName: 'Admin',
+    }),
+  });
 
   return {
-    sequelize,
-    Sequelize,
-    App: { findAll: mockFindAll, findByPk: mockFindByPk, create: mockCreate },
-    AdmobRevenue: { findAll: mockFindAll },
-    AppStoreData: { findAll: mockFindAll },
-    GooglePlayData: { findAll: mockFindAll },
-    StripeData: { findAll: mockFindAll },
-    CollectionLog: { findAll: mockFindAll, create: mockCreate },
-    initDB: jest.fn(),
+    connectDB: jest.fn(),
+    User: {
+      findById: mockFindById,
+      findOne: jest.fn(),
+    },
+    App: {
+      find: jest.fn().mockReturnValue({
+        sort: jest.fn().mockReturnValue({
+          lean: jest.fn().mockResolvedValue([]),
+        }),
+      }),
+      findOne: jest.fn().mockReturnValue({
+        lean: jest.fn().mockResolvedValue(null),
+      }),
+      findOneAndUpdate: jest.fn().mockReturnValue({
+        lean: jest.fn().mockResolvedValue(null),
+      }),
+      countDocuments: jest.fn().mockResolvedValue(0),
+    },
+    AdmobRevenue: { find: mockFind, aggregate: mockAggregate },
+    AppStoreData: { find: mockFind },
+    GooglePlayData: { find: mockFind },
+    StripeData: { find: mockFind },
+    CollectionLog: {
+      find: jest.fn().mockReturnValue({
+        sort: jest.fn().mockReturnValue({
+          limit: jest.fn().mockReturnValue({
+            lean: jest.fn().mockResolvedValue([]),
+          }),
+        }),
+      }),
+      create: jest.fn().mockResolvedValue({}),
+    },
   };
 });
 
 jest.mock('../src/collectors', () => ({
-  collectAll: jest.fn().mockResolvedValue([
+  collectForUser: jest.fn().mockResolvedValue([
     { source: 'admob', status: 'fulfilled' },
     { source: 'appstore', status: 'fulfilled' },
     { source: 'googleplay', status: 'fulfilled' },
     { source: 'stripe', status: 'fulfilled' },
   ]),
+}));
+
+jest.mock('../src/utils/logger', () => ({
+  info: jest.fn(),
+  error: jest.fn(),
+  warn: jest.fn(),
 }));
 
 const apiRoutes = require('../src/routes/api');
@@ -46,7 +88,7 @@ function createApp() {
 }
 
 function authHeader() {
-  const token = jwt.sign({ id: 1, email: 'admin@test.com' }, config.jwtSecret, { expiresIn: '1h' });
+  const token = jwt.sign({ id: 'user123', email: 'admin@test.com' }, config.jwtSecret, { expiresIn: '1h' });
   return `Bearer ${token}`;
 }
 
@@ -98,9 +140,6 @@ describe('API Routes', () => {
   });
 
   it('GET /api/summary should return unified summary', async () => {
-    const { AdmobRevenue } = require('../src/models');
-    AdmobRevenue.findAll.mockResolvedValue([]);
-
     const res = await request(app)
       .get('/api/summary?days=7')
       .set('Authorization', authHeader());

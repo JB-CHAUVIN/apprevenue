@@ -14,7 +14,7 @@
     "titleStart": "Rastrea ",
     "titleHighlight": "Todos Tus Ingresos",
     "titleEnd": " en Un Solo Panel",
-    "subtitle": "El panel gratuito y de código abierto que unifica los datos de AdMob, App Store Connect, Google Play y Stripe. Deja de alternar entre plataformas.",
+    "subtitle": "El panel unificado que reúne los datos de AdMob, App Store Connect, Google Play y Stripe. Deja de alternar entre plataformas.",
     "cta": "Comenzar Gratis",
     "ctaSecondary": "Ver Características"
   },
@@ -41,21 +41,30 @@
   },
   "pricing": {
     "sectionTitle": "Precios",
-    "sectionSubtitle": "No se requiere tarjeta de crédito. Sin costes ocultos.",
-    "badge": "GRATIS",
-    "price": "$0",
-    "period": "para siempre",
-    "features": [ "Apps ilimitadas", "Las 4 fuentes de ingresos", "Recopilación diaria automatizada", "Exportación CSV y JSON", "API REST completa", "Autoalojado y privado" ],
-    "cta": "Comenzar Ahora"
+    "sectionSubtitle": "Empieza gratis, mejora cuando necesites más potencia.",
+    "free": {
+      "badge": "GRATIS",
+      "price": "$0",
+      "period": "para siempre",
+      "features": ["Hasta 2 apps", "Las 4 fuentes de ingresos", "Sincronización diaria", "Exportación CSV y JSON", "Acceso API REST"],
+      "cta": "Comenzar"
+    },
+    "pro": {
+      "badge": "PRO",
+      "price": "€9",
+      "period": "mes",
+      "features": ["Apps ilimitadas", "Las 4 fuentes de ingresos", "Sincronización cada hora", "Exportación CSV y JSON", "Acceso API REST", "Soporte prioritario"],
+      "cta": "Mejorar a Pro"
+    }
   },
   "faq": {
     "sectionTitle": "Preguntas Frecuentes",
     "items": [
-      { "question": "¿AppRevenue es realmente gratis?", "answer": "Sí. AppRevenue es 100% gratuito y de código abierto. Lo alojas tú mismo en tu propio servidor, por lo que no hay costes de suscripción." },
+      { "question": "¿Hay un plan gratuito?", "answer": "¡Sí! El plan gratuito te permite rastrear hasta 2 apps con sincronización diaria sin costo. No se requiere tarjeta de crédito." },
       { "question": "¿Qué plataformas son compatibles?", "answer": "Soportamos AdMob (ingresos publicitarios), App Store Connect (iOS), Google Play Console (Android) y Stripe (pagos y suscripciones)." },
-      { "question": "¿Mis datos están seguros?", "answer": "Absolutamente. Todos los datos se almacenan localmente en tu propia base de datos SQLite. Nada se envía a servidores de terceros. La autenticación utiliza JWT, un estándar de la industria." },
-      { "question": "¿Puedo añadir múltiples apps?", "answer": "Sí. Puedes rastrear tantas apps como quieras. El panel muestra una vista unificada y te permite filtrar por aplicación individual." },
-      { "question": "¿Con qué frecuencia se recopilan los datos?", "answer": "Por defecto, los datos se recopilan diariamente a las 6 AM mediante una tarea cron. También puedes activar la recopilación manual en cualquier momento desde el panel." }
+      { "question": "¿Mis datos están seguros?", "answer": "Absolutamente. Tus credenciales se almacenan de forma segura y todas las comunicaciones API utilizan conexiones cifradas. La autenticación utiliza JWT, un estándar de la industria." },
+      { "question": "¿Puedo añadir múltiples apps?", "answer": "Los usuarios gratuitos pueden rastrear hasta 2 apps. Los usuarios Pro disfrutan de apps ilimitadas con sincronización cada hora por solo €9/mes." },
+      { "question": "¿Con qué frecuencia se recopilan los datos?", "answer": "El plan gratuito sincroniza los datos una vez al día. El plan Pro sincroniza cada hora para información casi en tiempo real. También puedes activar la recopilación manual en cualquier momento." }
     ]
   },
   "footer": {

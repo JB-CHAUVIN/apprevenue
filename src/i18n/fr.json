@@ -1,11 +1,11 @@
 {
   "meta": {
-    "title": "AppRevenue \u2014 Suivez tous vos revenus d\u2019applications au m\u00eame endroit",
-    "description": "Tableau de bord unifi\u00e9 et gratuit pour suivre les revenus AdMob, App Store, Google Play et Stripe. Analyses en temps r\u00e9el pour les d\u00e9veloppeurs d\u2019applications mobiles."
+    "title": "AppRevenue — Suivez tous vos revenus d'applications au même endroit",
+    "description": "Tableau de bord unifié et gratuit pour suivre les revenus AdMob, App Store, Google Play et Stripe. Analyses en temps réel pour les développeurs d'applications mobiles."
   },
   "nav": {
-    "features": "Fonctionnalit\u00e9s",
-    "howItWorks": "Comment \u00e7a marche",
+    "features": "Fonctionnalités",
+    "howItWorks": "Comment ça marche",
     "pricing": "Tarifs",
     "faq": "FAQ",
     "login": "Se connecter"
@@ -14,60 +14,69 @@
     "titleStart": "Suivez ",
     "titleHighlight": "tous vos revenus",
     "titleEnd": " dans un seul tableau de bord",
-    "subtitle": "Le tableau de bord gratuit et open source qui unifie les donn\u00e9es AdMob, App Store Connect, Google Play et Stripe. Arr\u00eatez de jongler entre les plateformes.",
+    "subtitle": "Le tableau de bord unifié qui rassemble les données AdMob, App Store Connect, Google Play et Stripe. Arrêtez de jongler entre les plateformes.",
     "cta": "Commencer gratuitement",
-    "ctaSecondary": "Voir les fonctionnalit\u00e9s"
+    "ctaSecondary": "Voir les fonctionnalités"
   },
   "features": {
     "sectionTitle": "Tout ce dont vous avez besoin",
-    "sectionSubtitle": "Un seul tableau de bord pour g\u00e9rer toutes vos sources de revenus",
+    "sectionSubtitle": "Un seul tableau de bord pour gérer toutes vos sources de revenus",
     "items": [
-      { "title": "Analyses AdMob", "description": "Suivez les revenus publicitaires, les impressions, les clics et l\u2019eCPM de toutes vos applications et pays en temps r\u00e9el." },
-      { "title": "App Store Connect", "description": "Surveillez les versions iOS, les statuts de build, les t\u00e9l\u00e9chargements, les notes et les revenus automatiquement." },
+      { "title": "Analyses AdMob", "description": "Suivez les revenus publicitaires, les impressions, les clics et l'eCPM de toutes vos applications et pays en temps réel." },
+      { "title": "App Store Connect", "description": "Surveillez les versions iOS, les statuts de build, les téléchargements, les notes et les revenus automatiquement." },
       { "title": "Google Play Console", "description": "Suivez les installations Android, les versions, les abonnements et les revenus depuis une vue unique." },
-      { "title": "Paiements Stripe", "description": "Surveillez le MRR, l\u2019ARR, les abonnements, le taux de d\u00e9sabonnement et les analyses de paiement en temps r\u00e9el." },
-      { "title": "Export CSV et API", "description": "Exportez toutes vos donn\u00e9es au format CSV ou JSON. API REST compl\u00e8te pour vos int\u00e9grations personnalis\u00e9es." },
-      { "title": "Collecte automatis\u00e9e", "description": "Des t\u00e2ches cron quotidiennes collectent vos donn\u00e9es automatiquement. D\u00e9clenchez une collecte manuelle \u00e0 tout moment." }
+      { "title": "Paiements Stripe", "description": "Surveillez le MRR, l'ARR, les abonnements, le taux de désabonnement et les analyses de paiement en temps réel." },
+      { "title": "Export CSV et API", "description": "Exportez toutes vos données au format CSV ou JSON. API REST complète pour vos intégrations personnalisées." },
+      { "title": "Collecte automatisée", "description": "Des tâches cron quotidiennes collectent vos données automatiquement. Déclenchez une collecte manuelle à tout moment." }
     ]
   },
   "howItWorks": {
-    "sectionTitle": "Comment \u00e7a marche",
-    "sectionSubtitle": "Op\u00e9rationnel en trois \u00e9tapes simples",
+    "sectionTitle": "Comment ça marche",
+    "sectionSubtitle": "Opérationnel en trois étapes simples",
     "steps": [
-      { "title": "Connectez vos comptes", "description": "Ajoutez vos cl\u00e9s API pour AdMob, App Store Connect, Google Play et Stripe." },
-      { "title": "Collecte automatique des donn\u00e9es", "description": "Notre syst\u00e8me cron r\u00e9cup\u00e8re vos donn\u00e9es de revenus quotidiennement. Aucune intervention manuelle requise." },
-      { "title": "Analysez et exportez", "description": "Consultez des graphiques unifi\u00e9s, filtrez par plage de dates et exportez vos donn\u00e9es \u00e0 tout moment." }
+      { "title": "Connectez vos comptes", "description": "Ajoutez vos clés API pour AdMob, App Store Connect, Google Play et Stripe." },
+      { "title": "Collecte automatique des données", "description": "Notre système cron récupère vos données de revenus quotidiennement. Aucune intervention manuelle requise." },
+      { "title": "Analysez et exportez", "description": "Consultez des graphiques unifiés, filtrez par plage de dates et exportez vos données à tout moment." }
     ]
   },
   "pricing": {
     "sectionTitle": "Tarifs",
-    "sectionSubtitle": "Aucune carte bancaire requise. Aucun frais cach\u00e9.",
-    "badge": "GRATUIT",
-    "price": "0 \u20ac",
-    "period": "pour toujours",
-    "features": [ "Applications illimit\u00e9es", "Les 4 sources de revenus", "Collecte automatique quotidienne", "Export CSV et JSON", "API REST compl\u00e8te", "Auto-h\u00e9berg\u00e9 et priv\u00e9" ],
-    "cta": "Commencer maintenant"
+    "sectionSubtitle": "Commencez gratuitement, passez au supérieur quand vous en avez besoin.",
+    "free": {
+      "badge": "GRATUIT",
+      "price": "0 €",
+      "period": "pour toujours",
+      "features": ["Jusqu'à 2 applications", "Les 4 sources de revenus", "Synchronisation quotidienne", "Export CSV et JSON", "Accès API REST"],
+      "cta": "Commencer"
+    },
+    "pro": {
+      "badge": "PRO",
+      "price": "9 €",
+      "period": "mois",
+      "features": ["Applications illimitées", "Les 4 sources de revenus", "Synchronisation horaire", "Export CSV et JSON", "Accès API REST", "Support prioritaire"],
+      "cta": "Passer au Pro"
+    }
   },
   "faq": {
-    "sectionTitle": "Questions fr\u00e9quemment pos\u00e9es",
+    "sectionTitle": "Questions fréquemment posées",
     "items": [
-      { "question": "AppRevenue est-il vraiment gratuit ?", "answer": "Oui. AppRevenue est 100 % gratuit et open source. Vous l\u2019h\u00e9bergez vous-m\u00eame sur votre propre serveur, il n\u2019y a donc aucun co\u00fbt d\u2019abonnement." },
+      { "question": "Y a-t-il un plan gratuit ?", "answer": "Oui ! Le plan gratuit vous permet de suivre jusqu'à 2 applications avec une synchronisation quotidienne, sans frais. Aucune carte bancaire requise." },
       { "question": "Quelles plateformes sont prises en charge ?", "answer": "Nous prenons en charge AdMob (revenus publicitaires), App Store Connect (iOS), Google Play Console (Android) et Stripe (paiements et abonnements)." },
-      { "question": "Mes donn\u00e9es sont-elles s\u00e9curis\u00e9es ?", "answer": "Absolument. Toutes les donn\u00e9es sont stock\u00e9es localement dans votre propre base de donn\u00e9es SQLite. Rien n\u2019est envoy\u00e9 \u00e0 des serveurs tiers. L\u2019authentification utilise le standard industriel JWT." },
-      { "question": "Puis-je ajouter plusieurs applications ?", "answer": "Oui. Vous pouvez suivre autant d\u2019applications que vous le souhaitez. Le tableau de bord affiche une vue unifi\u00e9e et vous permet de filtrer par application." },
-      { "question": "À quelle fr\u00e9quence les donn\u00e9es sont-elles collect\u00e9es ?", "answer": "Par d\u00e9faut, les donn\u00e9es sont collect\u00e9es quotidiennement \u00e0 6 h du matin via une t\u00e2che cron. Vous pouvez \u00e9galement d\u00e9clencher une collecte manuelle \u00e0 tout moment depuis le tableau de bord." }
+      { "question": "Mes données sont-elles sécurisées ?", "answer": "Absolument. Vos identifiants sont stockés de manière sécurisée et toutes les communications API utilisent des connexions chiffrées. L'authentification utilise le standard industriel JWT." },
+      { "question": "Puis-je ajouter plusieurs applications ?", "answer": "Les utilisateurs gratuits peuvent suivre jusqu'à 2 applications. Les utilisateurs Pro profitent d'applications illimitées avec synchronisation horaire pour seulement 9 €/mois." },
+      { "question": "À quelle fréquence les données sont-elles collectées ?", "answer": "Le plan gratuit synchronise les données une fois par jour. Le plan Pro synchronise toutes les heures pour des insights quasi temps réel. Vous pouvez également déclencher une collecte manuelle à tout moment." }
     ]
   },
   "footer": {
-    "description": "Suivi unifi\u00e9 des revenus pour les d\u00e9veloppeurs d\u2019applications mobiles.",
+    "description": "Suivi unifié des revenus pour les développeurs d'applications mobiles.",
     "product": "Produit",
     "resources": "Ressources",
-    "legal": "Mentions l\u00e9gales",
+    "legal": "Mentions légales",
     "docs": "Documentation",
-    "api": "R\u00e9f\u00e9rence API",
+    "api": "Référence API",
     "github": "GitHub",
-    "privacy": "Politique de confidentialit\u00e9",
-    "terms": "Conditions d\u2019utilisation",
-    "copyright": "Tous droits r\u00e9serv\u00e9s."
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions d'utilisation",
+    "copyright": "Tous droits réservés."
   }
 }

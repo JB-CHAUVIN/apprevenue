@@ -3,43 +3,65 @@
     <h2 class="section-title"><%= t('pricing.sectionTitle') %></h2>
     <p class="section-subtitle"><%= t('pricing.sectionSubtitle') %></p>
 
-    <div class="pricing-card-wrapper">
+    <div class="pricing-grid">
+      <!-- Free Plan -->
       <div class="glass pricing-card">
-        <div class="pricing-badge"><%= t('pricing.badge') %></div>
+        <div class="pricing-badge pricing-badge-free"><%= i18n.pricing.free.badge %></div>
         <div class="pricing-amount">
-          <span class="pricing-price"><%= t('pricing.price') %></span>
-          <span class="pricing-period">/ <%= t('pricing.period') %></span>
+          <span class="pricing-price"><%= i18n.pricing.free.price %></span>
+          <span class="pricing-period">/ <%= i18n.pricing.free.period %></span>
         </div>
         <ul class="pricing-features">
-          <% i18n.pricing.features.forEach(function(f) { %>
+          <% i18n.pricing.free.features.forEach(function(f) { %>
           <li>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--neon-cyan)" stroke-width="2"><polyline points="20,6 9,17 4,12"/></svg>
             <span><%= f %></span>
           </li>
           <% }); %>
         </ul>
-        <a href="/login" class="btn-neon" style="width:100%;text-align:center;"><%= t('pricing.cta') %></a>
+        <a href="/register" class="btn-outline-neon" style="width:100%;text-align:center;"><%= i18n.pricing.free.cta %></a>
+      </div>
+
+      <!-- Pro Plan -->
+      <div class="glass pricing-card pricing-card-pro">
+        <div class="pricing-badge pricing-badge-pro"><%= i18n.pricing.pro.badge %></div>
+        <div class="pricing-amount">
+          <span class="pricing-price"><%= i18n.pricing.pro.price %></span>
+          <span class="pricing-period">/ <%= i18n.pricing.pro.period %></span>
+        </div>
+        <ul class="pricing-features">
+          <% i18n.pricing.pro.features.forEach(function(f) { %>
+          <li>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--neon-purple)" stroke-width="2"><polyline points="20,6 9,17 4,12"/></svg>
+            <span><%= f %></span>
+          </li>
+          <% }); %>
+        </ul>
+        <a href="/register" class="btn-neon" style="width:100%;text-align:center;"><%= i18n.pricing.pro.cta %></a>
       </div>
     </div>
   </div>
 </section>
 
 <style>
-  .pricing-card-wrapper {
-    display: flex;
-    justify-content: center;
+  .pricing-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 32px;
+    max-width: 800px;
+    margin: 0 auto;
   }
   .pricing-card {
-    max-width: 400px;
-    width: 100%;
     text-align: center;
     position: relative;
     border-top: 2px solid var(--neon-cyan);
   }
+  .pricing-card-pro {
+    border-top: 2px solid var(--neon-purple);
+    box-shadow: 0 0 30px rgba(139, 92, 246, 0.15);
+  }
   .pricing-badge {
     display: inline-block;
-    background: var(--neon-cyan);
-    color: var(--bg-dark);
     font-family: var(--font-display);
     font-size: 0.8rem;
     font-weight: 700;
@@ -47,6 +69,14 @@
     border-radius: 20px;
     letter-spacing: 0.1em;
     margin-bottom: 20px;
+  }
+  .pricing-badge-free {
+    background: var(--neon-cyan);
+    color: var(--bg-dark);
+  }
+  .pricing-badge-pro {
+    background: var(--neon-purple);
+    color: #fff;
   }
   .pricing-amount {
     margin-bottom: 28px;
@@ -77,4 +107,11 @@
   .pricing-features li:last-child { border-bottom: none; }
   [dir="rtl"] .pricing-features { text-align: right; }
   [dir="rtl"] .pricing-features li { flex-direction: row-reverse; }
+
+  @media (max-width: 640px) {
+    .pricing-grid {
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+  }
 </style>

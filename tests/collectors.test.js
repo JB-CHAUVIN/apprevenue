@@ -1,6 +1,6 @@
 /**
  * Collector unit tests.
- * These test the collection logic with mocked external APIs.
+ * These test the collection logic with mocked external APIs and Mongoose models.
  */
 
 // Mock all external dependencies before requiring modules
@@ -81,29 +81,28 @@ jest.mock('stripe', () => {
 jest.mock('node-fetch', () => jest.fn());
 
 jest.mock('../src/models', () => {
-  const upsert = jest.fn().mockResolvedValue([{}, true]);
+  const findOneAndUpdate = jest.fn().mockResolvedValue({});
   const create = jest.fn().mockResolvedValue({});
-  const findAll = jest.fn().mockResolvedValue([]);
+  const find = jest.fn().mockResolvedValue([]);
   return {
-    App: { findAll, findOne: jest.fn().mockResolvedValue(null) },
-    AdmobRevenue: { upsert },
-    AppStoreData: { upsert },
-    GooglePlayData: { upsert },
-    StripeData: { upsert },
+    connectDB: jest.fn(),
+    App: { find, findOne: jest.fn().mockResolvedValue(null) },
+    AdmobRevenue: { findOneAndUpdate },
+    AppStoreData: { findOneAndUpdate },
+    GooglePlayData: { findOneAndUpdate },
+    StripeData: { findOneAndUpdate },
     CollectionLog: { create },
-    initDB: jest.fn(),
-    sequelize: {},
+    UserCredential: {
+      find: jest.fn().mockResolvedValue([]),
+    },
   };
 });
 
-// Set required env vars for tests
-process.env.GOOGLE_CLIENT_ID = 'test-client-id';
-process.env.GOOGLE_CLIENT_SECRET = 'test-secret';
-process.env.GOOGLE_REFRESH_TOKEN = 'test-refresh';
-process.env.ADMOB_PUBLISHER_ID = 'pub-123';
-process.env.STRIPE_SECRET_KEY = 'sk_test_123';
-process.env.GOOGLE_PLAY_SERVICE_ACCOUNT_PATH = './keys/test.json';
-process.env.GOOGLE_PLAY_PACKAGE_NAMES = 'com.test.app';
+jest.mock('../src/utils/logger', () => ({
+  info: jest.fn(),
+  error: jest.fn(),
+  warn: jest.fn(),
+}));
 
 describe('Collectors', () => {
   beforeEach(() => {
@@ -112,26 +111,36 @@ describe('Collectors', () => {
 
   describe('AdMob collector', () => {
     it('should collect and upsert revenue data', async () => {
-      // Re-require to pick up mocks
       jest.isolateModules(async () => {
         const { AdmobRevenue, CollectionLog } = require('../src/models');
         const admob = require('../src/collectors/admob');
 
-        await admob.collect();
+        const credentials = {
+          clientId: 'test-client-id',
+          clientSecret: 'test-secret',
+          refreshToken: 'test-refresh',
+          publisherId: 'pub-123',
+        };
 
-        expect(AdmobRevenue.upsert).toHaveBeenCalledTimes(1);
-        expect(AdmobRevenue.upsert).toHaveBeenCalledWith(
+        await admob.collect('user123', credentials);
+
+        expect(AdmobRevenue.findOneAndUpdate).toHaveBeenCalledTimes(1);
+        expect(AdmobRevenue.findOneAndUpdate).toHaveBeenCalledWith(
           expect.objectContaining({
+            userId: 'user123',
             appId: 'ca-app-pub-123~456',
-            appName: 'Test App',
             country: 'US',
+          }),
+          expect.objectContaining({
             estimatedRevenue: 15.23,
             impressions: 10000,
             clicks: 150,
-          })
+          }),
+          expect.objectContaining({ upsert: true })
         );
         expect(CollectionLog.create).toHaveBeenCalledWith(
           expect.objectContaining({
+            userId: 'user123',
             source: 'admob',
             status: 'success',
           })
@@ -146,17 +155,22 @@ describe('Collectors', () => {
         const { StripeData, CollectionLog } = require('../src/models');
         const stripe = require('../src/collectors/stripe');
 
-        await stripe.collect();
+        const credentials = { secretKey: 'sk_test_123' };
 
-        expect(StripeData.upsert).toHaveBeenCalledTimes(1);
-        expect(StripeData.upsert).toHaveBeenCalledWith(
+        await stripe.collect('user123', credentials);
+
+        expect(StripeData.findOneAndUpdate).toHaveBeenCalledTimes(1);
+        expect(StripeData.findOneAndUpdate).toHaveBeenCalledWith(
+          expect.objectContaining({ userId: 'user123' }),
           expect.objectContaining({
             activeSubscriptions: 0,
             mrr: 0,
-          })
+          }),
+          expect.objectContaining({ upsert: true })
         );
         expect(CollectionLog.create).toHaveBeenCalledWith(
           expect.objectContaining({
+            userId: 'user123',
             source: 'stripe',
             status: 'success',
           })
@@ -165,12 +179,17 @@ describe('Collectors', () => {
     });
   });
 
-  describe('collectAll', () => {
-    it('should run all collectors in parallel', async () => {
+  describe('collectForUser', () => {
+    it('should run collectors for configured sources', async () => {
       jest.isolateModules(async () => {
-        const collectors = require('../src/collectors');
-        const summary = await collectors.collectAll();
-        expect(summary).toHaveLength(4);
+        const { UserCredential } = require('../src/models');
+        UserCredential.find.mockResolvedValue([
+          { source: 'stripe', credentials: { secretKey: 'sk_test_123' } },
+        ]);
+
+        const { collectForUser } = require('../src/collectors');
+        const summary = await collectForUser('user123');
+        expect(Array.isArray(summary)).toBe(true);
       });
     });
   });

@@ -14,7 +14,7 @@
     "titleStart": "Acompanhe ",
     "titleHighlight": "Toda a Sua Receita",
     "titleEnd": " em Um Único Painel",
-    "subtitle": "O painel gratuito e de código aberto que unifica os dados do AdMob, App Store Connect, Google Play e Stripe. Pare de alternar entre plataformas.",
+    "subtitle": "O painel unificado que reúne os dados do AdMob, App Store Connect, Google Play e Stripe. Pare de alternar entre plataformas.",
     "cta": "Comece Grátis",
     "ctaSecondary": "Ver Funcionalidades"
   },
@@ -41,21 +41,30 @@
   },
   "pricing": {
     "sectionTitle": "Preços",
-    "sectionSubtitle": "Sem necessidade de cartão de crédito. Sem taxas ocultas.",
-    "badge": "GRÁTIS",
-    "price": "$0",
-    "period": "para sempre",
-    "features": ["Apps ilimitados", "Todas as 4 fontes de receita", "Coleta automatizada diária", "Exportação CSV e JSON", "API REST completa", "Auto-hospedado e privado"],
-    "cta": "Comece Agora"
+    "sectionSubtitle": "Comece grátis, faça upgrade quando precisar de mais potência.",
+    "free": {
+      "badge": "GRÁTIS",
+      "price": "$0",
+      "period": "para sempre",
+      "features": ["Até 2 apps", "Todas as 4 fontes de receita", "Sincronização diária automática", "Exportação CSV e JSON", "Acesso API REST"],
+      "cta": "Começar"
+    },
+    "pro": {
+      "badge": "PRO",
+      "price": "€9",
+      "period": "mês",
+      "features": ["Apps ilimitados", "Todas as 4 fontes de receita", "Sincronização a cada hora", "Exportação CSV e JSON", "Acesso API REST", "Suporte prioritário"],
+      "cta": "Upgrade para Pro"
+    }
   },
   "faq": {
     "sectionTitle": "Perguntas Frequentes",
     "items": [
-      { "question": "O AppRevenue é realmente gratuito?", "answer": "Sim. O AppRevenue é 100% gratuito e de código aberto. Você o hospeda no seu próprio servidor, então não há custos de assinatura." },
+      { "question": "Existe um plano gratuito?", "answer": "Sim! O plano gratuito permite acompanhar até 2 apps com sincronização diária sem custo. Não é necessário cartão de crédito." },
       { "question": "Quais plataformas são suportadas?", "answer": "Suportamos AdMob (receita de anúncios), App Store Connect (iOS), Google Play Console (Android) e Stripe (pagamentos e assinaturas)." },
-      { "question": "Meus dados estão seguros?", "answer": "Com certeza. Todos os dados são armazenados localmente no seu próprio banco de dados SQLite. Nada é enviado para servidores de terceiros. A autenticação utiliza o padrão JWT da indústria." },
-      { "question": "Posso adicionar vários apps?", "answer": "Sim. Você pode acompanhar quantos apps quiser. O painel mostra uma visão unificada e permite filtrar por app individual." },
-      { "question": "Com que frequência os dados são coletados?", "answer": "Por padrão, os dados são coletados diariamente às 6h da manhã por meio de uma tarefa agendada. Você também pode acionar a coleta manual a qualquer momento pelo painel." }
+      { "question": "Meus dados estão seguros?", "answer": "Com certeza. Suas credenciais são armazenadas de forma segura e todas as comunicações de API utilizam conexões criptografadas. A autenticação utiliza o padrão JWT da indústria." },
+      { "question": "Posso adicionar vários apps?", "answer": "Usuários gratuitos podem acompanhar até 2 apps. Usuários Pro têm apps ilimitados com sincronização a cada hora por apenas €9/mês." },
+      { "question": "Com que frequência os dados são coletados?", "answer": "O plano gratuito sincroniza dados uma vez por dia. O plano Pro sincroniza a cada hora para insights quase em tempo real. Você também pode acionar a coleta manual a qualquer momento." }
     ]
   },
   "footer": {

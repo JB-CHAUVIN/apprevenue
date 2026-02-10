@@ -14,7 +14,7 @@
     "titleStart": "在一个仪表盘中",
     "titleHighlight": "追踪所有收入",
     "titleEnd": "",
-    "subtitle": "免费开源的仪表盘，统一整合 AdMob、App Store Connect、Google Play 和 Stripe 数据。告别在多个平台之间来回切换。",
+    "subtitle": "统一整合 AdMob、App Store Connect、Google Play 和 Stripe 数据的仪表盘。告别在多个平台之间来回切换。",
     "cta": "免费开始使用",
     "ctaSecondary": "查看功能"
   },
@@ -41,21 +41,30 @@
   },
   "pricing": {
     "sectionTitle": "定价",
-    "sectionSubtitle": "无需信用卡。没有隐藏费用。",
-    "badge": "免费",
-    "price": "$0",
-    "period": "永久",
-    "features": [ "无限应用", "全部 4 个收入来源", "每日自动采集", "CSV 和 JSON 导出", "完整 REST API", "自托管且私密" ],
-    "cta": "立即开始"
+    "sectionSubtitle": "免费开始，需要更多功能时再升级。",
+    "free": {
+      "badge": "免费",
+      "price": "$0",
+      "period": "永久",
+      "features": ["最多 2 个应用", "全部 4 个收入来源", "每日自动同步", "CSV 和 JSON 导出", "REST API 访问"],
+      "cta": "开始使用"
+    },
+    "pro": {
+      "badge": "PRO",
+      "price": "€9",
+      "period": "月",
+      "features": ["无限应用", "全部 4 个收入来源", "每小时自动同步", "CSV 和 JSON 导出", "REST API 访问", "优先支持"],
+      "cta": "升级至 Pro"
+    }
   },
   "faq": {
     "sectionTitle": "常见问题",
     "items": [
-      { "question": "AppRevenue 真的免费吗？", "answer": "是的。AppRevenue 是 100% 免费且开源的。您将其自托管在自己的服务器上，因此没有任何订阅费用。" },
+      { "question": "有免费计划吗？", "answer": "有！免费计划允许您追踪最多 2 个应用，享受每日数据同步，完全免费。无需信用卡。" },
       { "question": "支持哪些平台？", "answer": "我们支持 AdMob（广告收入）、App Store Connect（iOS）、Google Play Console（Android）和 Stripe（支付与订阅）。" },
-      { "question": "我的数据安全吗？", "answer": "绝对安全。所有数据都存储在您自己的 SQLite 数据库中。没有任何数据会发送到第三方服务器。身份验证采用行业标准的 JWT。" },
-      { "question": "我可以添加多个应用吗？", "answer": "可以。您可以追踪任意数量的应用。仪表盘显示统一视图，并允许您按单个应用进行筛选。" },
-      { "question": "数据多久采集一次？", "answer": "默认情况下，数据通过定时任务每天早上 6 点自动采集。您也可以随时从仪表盘手动触发采集。" }
+      { "question": "我的数据安全吗？", "answer": "绝对安全。您的凭据被安全存储，所有 API 通信都使用加密连接。身份验证采用行业标准的 JWT。" },
+      { "question": "我可以添加多个应用吗？", "answer": "免费用户可以追踪最多 2 个应用。Pro 用户享受无限应用和每小时同步，仅需 €9/月。" },
+      { "question": "数据多久采集一次？", "answer": "免费计划每天同步一次数据。Pro 计划每小时同步一次，提供近实时的洞察。您也可以随时手动触发采集。" }
     ]
   },
   "footer": {

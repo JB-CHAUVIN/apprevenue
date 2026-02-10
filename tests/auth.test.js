@@ -4,22 +4,32 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const cookieParser = require('cookie-parser');
 
-// Mock models
+// Mock models (Mongoose)
 jest.mock('../src/models', () => {
   const mockUser = {
     findOne: jest.fn(),
+    findById: jest.fn(),
     create: jest.fn(),
   };
   return {
     User: mockUser,
-    initDB: jest.fn(),
-    sequelize: { authenticate: jest.fn(), sync: jest.fn() },
+    connectDB: jest.fn(),
   };
 });
 
+jest.mock('../src/services/email', () => ({
+  sendVerificationEmail: jest.fn().mockResolvedValue(true),
+  sendWelcomeEmail: jest.fn().mockResolvedValue(true),
+}));
+
+jest.mock('../src/utils/logger', () => ({
+  info: jest.fn(),
+  error: jest.fn(),
+  warn: jest.fn(),
+}));
+
 const { User } = require('../src/models');
 
-// Build a mini app with auth routes
 const authRoutes = require('../src/routes/auth');
 const { requireAuth } = require('../src/middleware/auth');
 
@@ -54,9 +64,31 @@ describe('Authentication', () => {
       expect(res.body.error).toBe('Invalid credentials');
     });
 
-    it('should return a JWT for valid credentials', async () => {
+    it('should return 403 for unverified user', async () => {
       const hash = bcrypt.hashSync('password123', 10);
-      User.findOne.mockResolvedValue({ id: 1, email: 'admin@test.com', passwordHash: hash });
+      User.findOne.mockResolvedValue({
+        _id: { toString: () => 'abc123' },
+        email: 'user@test.com',
+        passwordHash: hash,
+        isVerified: false,
+      });
+
+      const res = await request(app)
+        .post('/api/login')
+        .send({ email: 'user@test.com', password: 'password123' });
+
+      expect(res.status).toBe(403);
+      expect(res.body.error).toBe('Email not verified');
+    });
+
+    it('should return a JWT for valid verified credentials', async () => {
+      const hash = bcrypt.hashSync('password123', 10);
+      User.findOne.mockResolvedValue({
+        _id: { toString: () => 'abc123' },
+        email: 'admin@test.com',
+        passwordHash: hash,
+        isVerified: true,
+      });
 
       const res = await request(app)
         .post('/api/login')
@@ -66,7 +98,6 @@ describe('Authentication', () => {
       expect(res.body.token).toBeDefined();
       expect(res.body.expiresIn).toBe('24h');
 
-      // Verify token is valid
       const decoded = jwt.verify(res.body.token, require('../src/config').jwtSecret);
       expect(decoded.email).toBe('admin@test.com');
     });
@@ -79,8 +110,18 @@ describe('Authentication', () => {
     });
 
     it('should accept requests with valid Bearer token', async () => {
+      // Mock User.findById to return a lean user object
+      User.findById.mockReturnValue({
+        lean: jest.fn().mockResolvedValue({
+          _id: { toString: () => 'abc123' },
+          email: 'admin@test.com',
+          plan: 'free',
+          displayName: 'Admin',
+        }),
+      });
+
       const token = jwt.sign(
-        { id: 1, email: 'admin@test.com' },
+        { id: 'abc123', email: 'admin@test.com' },
         require('../src/config').jwtSecret,
         { expiresIn: '1h' }
       );
@@ -96,9 +137,27 @@ describe('Authentication', () => {
 
     it('should reject expired tokens', async () => {
       const token = jwt.sign(
-        { id: 1, email: 'admin@test.com' },
+        { id: 'abc123', email: 'admin@test.com' },
         require('../src/config').jwtSecret,
         { expiresIn: '-1s' }
+      );
+
+      const res = await request(app)
+        .get('/protected')
+        .set('Authorization', `Bearer ${token}`);
+
+      expect(res.status).toBe(401);
+    });
+
+    it('should reject if user not found in DB', async () => {
+      User.findById.mockReturnValue({
+        lean: jest.fn().mockResolvedValue(null),
+      });
+
+      const token = jwt.sign(
+        { id: 'nonexistent', email: 'gone@test.com' },
+        require('../src/config').jwtSecret,
+        { expiresIn: '1h' }
       );
 
       const res = await request(app)

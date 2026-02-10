@@ -49,25 +49,27 @@ router.get('/llms.txt', (req, res) => {
   res.type('text/plain').send(
 `# ${theme.siteName}
 
-> ${theme.siteName} is a free, open-source unified revenue tracking dashboard for mobile app developers.
+> ${theme.siteName} is a unified revenue tracking dashboard for mobile app developers. Free and Pro plans available.
 
 ## What it does
 - Aggregates revenue data from AdMob, App Store Connect, Google Play Console, and Stripe
 - Provides real-time analytics with charts and KPI cards
-- Supports daily automated data collection via cron jobs
+- Free plan: daily automated sync, up to 2 apps
+- Pro plan: hourly sync, unlimited apps, priority support (€9/month)
 - Offers CSV and JSON data export with a full REST API
-- Self-hosted on your own infrastructure for complete data privacy
 
 ## Tech stack
-- Backend: Node.js, Express, Sequelize ORM, SQLite
+- Backend: Node.js, Express, Mongoose, MongoDB
 - Frontend: EJS templates, Chart.js
 - Authentication: JWT with bcrypt password hashing
+- Payments: Stripe Checkout
 
 ## Supported languages
 ${theme.locales.map(l => `- ${l}`).join('\n')}
 
 ## Links
 - Website: ${theme.siteUrl}
+- Register: ${theme.siteUrl}/register
 - Login: ${theme.siteUrl}/login
 `);
 });
