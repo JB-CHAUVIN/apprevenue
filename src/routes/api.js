@@ -1,7 +1,7 @@
 const express = require('express');
 const { Parser } = require('json2csv');
 const { requireAuth } = require('../middleware/auth');
-const { App, AdmobRevenue, AppStoreData, GooglePlayData, StripeData, CollectionLog, User } = require('../models');
+const { App, AdmobRevenue, AppStoreData, GooglePlayData, StripeData, CollectionLog, User, UserCredential } = require('../models');
 const { collectForUser } = require('../collectors');
 const logger = require('../utils/logger');
 
@@ -175,6 +175,184 @@ router.get('/summary', async (req, res) => {
   }
 });
 
+// ========== Service connection status ==========
+router.get('/services/status', async (req, res) => {
+  try {
+    const credentialTest = require('../services/credential-test');
+    const creds = await UserCredential.find({ userId: req.user.id }).lean();
+    const credMap = {};
+    for (const c of creds) credMap[c.source] = c;
+
+    const sources = ['admob', 'stripe', 'appstore', 'googleplay'];
+    const results = {};
+
+    await Promise.all(sources.map(async (source) => {
+      const cred = credMap[source];
+      if (!cred?.credentials || !cred.isConfigured) {
+        results[source] = { status: 'not_configured' };
+        return;
+      }
+      try {
+        const testFn = {
+          admob: credentialTest.testAdmob,
+          stripe: credentialTest.testStripe,
+          appstore: credentialTest.testAppStore,
+          googleplay: credentialTest.testGooglePlay,
+        }[source];
+        await testFn(cred.credentials);
+        await UserCredential.findByIdAndUpdate(cred._id, { lastTestedAt: new Date(), testStatus: 'success' });
+        results[source] = { status: 'success' };
+      } catch (err) {
+        await UserCredential.findByIdAndUpdate(cred._id, { lastTestedAt: new Date(), testStatus: 'error' });
+        results[source] = { status: 'error', message: err.message };
+      }
+    }));
+
+    res.json(results);
+  } catch (err) {
+    logger.error('API /services/status error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// ========== Service listings (for app form dropdowns) ==========
+
+// List iOS apps from App Store Connect
+router.get('/services/appstore/apps', async (req, res) => {
+  try {
+    const cred = await UserCredential.findOne({ userId: req.user.id, source: 'appstore' }).lean();
+    if (!cred?.credentials?.issuerId || !cred?.credentials?.keyId || !cred?.credentials?.privateKey) {
+      return res.json({ configured: false, items: [] });
+    }
+    const jwt = require('jsonwebtoken');
+    const fetch = require('node-fetch');
+    const now = Math.floor(Date.now() / 1000);
+    const token = jwt.sign(
+      { iss: cred.credentials.issuerId, iat: now, exp: now + 20 * 60, aud: 'appstoreconnect-v1' },
+      cred.credentials.privateKey,
+      { algorithm: 'ES256', keyid: cred.credentials.keyId }
+    );
+    const apiRes = await fetch('https://api.appstoreconnect.apple.com/v1/apps?fields[apps]=name,bundleId&limit=200', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!apiRes.ok) throw new Error(`App Store API returned ${apiRes.status}`);
+    const body = await apiRes.json();
+    const items = (body.data || []).map(app => ({
+      appId: app.id,
+      name: app.attributes?.name || app.id,
+      bundleId: app.attributes?.bundleId || '',
+    }));
+    res.json({ configured: true, items });
+  } catch (err) {
+    logger.error('API /services/appstore/apps error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// List Stripe products
+router.get('/services/stripe/products', async (req, res) => {
+  try {
+    const cred = await UserCredential.findOne({ userId: req.user.id, source: 'stripe' }).lean();
+    if (!cred?.credentials?.secretKey) {
+      return res.json({ configured: false, items: [] });
+    }
+    const Stripe = require('stripe');
+    const stripe = new Stripe(cred.credentials.secretKey);
+    const products = await stripe.products.list({ limit: 100, active: true });
+    const items = products.data.map(p => ({
+      productId: p.id,
+      name: p.name || p.id,
+    }));
+    res.json({ configured: true, items });
+  } catch (err) {
+    logger.error('API /services/stripe/products error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// List AdMob apps from collected data
+router.get('/services/admob/apps', async (req, res) => {
+  try {
+    const cred = await UserCredential.findOne({ userId: req.user.id, source: 'admob' }).lean();
+    if (!cred?.credentials?.publisherId) {
+      return res.json({ configured: false, items: [] });
+    }
+    const items = await AdmobRevenue.aggregate([
+      { $match: { userId: require('mongoose').Types.ObjectId.createFromHexString(req.user.id) } },
+      { $group: { _id: '$appId', appName: { $last: '$appName' } } },
+      { $project: { appId: '$_id', appName: 1, _id: 0 } },
+      { $sort: { appName: 1 } },
+    ]);
+    res.json({ configured: true, items });
+  } catch (err) {
+    logger.error('API /services/admob/apps error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// List Google Play apps — try Reporting API first, fallback to local data
+router.get('/services/googleplay/apps', async (req, res) => {
+  try {
+    const cred = await UserCredential.findOne({ userId: req.user.id, source: 'googleplay' }).lean();
+    if (!cred?.credentials?.serviceAccountJson) {
+      return res.json({ configured: false, items: [] });
+    }
+
+    // 1) Try Play Developer Reporting API (apps.search)
+    let items = [];
+    try {
+      const { google } = require('googleapis');
+      const auth = new google.auth.GoogleAuth({
+        credentials: JSON.parse(cred.credentials.serviceAccountJson),
+        scopes: ['https://www.googleapis.com/auth/playdeveloperreporting'],
+      });
+      const reporting = google.playdeveloperreporting({ version: 'v1beta1', auth });
+
+      let pageToken;
+      do {
+        const result = await reporting.apps.search({ pageSize: 100, pageToken });
+        for (const app of (result.data.apps || [])) {
+          items.push({
+            packageName: app.packageName || '',
+            appName: app.displayName || app.packageName || '',
+          });
+        }
+        pageToken = result.data.nextPageToken;
+      } while (pageToken);
+    } catch (e) {
+      logger.warn('Play Developer Reporting API failed, falling back to local data:', e.message);
+    }
+
+    // 2) Fallback: merge from App model + collected GooglePlayData
+    if (items.length === 0) {
+      const mongoose = require('mongoose');
+      const [fromApps, fromData] = await Promise.all([
+        App.find({ userId: req.user.id, androidPackageName: { $ne: null } }).lean(),
+        GooglePlayData.aggregate([
+          { $match: { userId: mongoose.Types.ObjectId.createFromHexString(req.user.id) } },
+          { $group: { _id: '$packageName', appName: { $last: '$appName' } } },
+          { $project: { packageName: '$_id', appName: 1, _id: 0 } },
+        ]),
+      ]);
+
+      const seen = new Map();
+      for (const app of fromApps) {
+        if (app.androidPackageName) seen.set(app.androidPackageName, app.name);
+      }
+      for (const d of fromData) {
+        if (d.packageName && !seen.has(d.packageName)) seen.set(d.packageName, d.appName || d.packageName);
+      }
+      items = Array.from(seen.entries()).map(([packageName, appName]) => ({ packageName, appName }));
+    }
+
+    items.sort((a, b) => a.appName.localeCompare(b.appName));
+    res.json({ configured: true, items });
+  } catch (err) {
+    logger.error('API /services/googleplay/apps error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
 // ========== Apps CRUD ==========
 router.get('/apps', async (req, res) => {
   try {
@@ -227,6 +405,17 @@ router.put('/apps/:id', async (req, res) => {
     res.json(app);
   } catch (err) {
     logger.error('API PUT /apps/:id error:', err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.delete('/apps/:id', async (req, res) => {
+  try {
+    const app = await App.findOneAndDelete({ _id: req.params.id, userId: req.user.id });
+    if (!app) return res.status(404).json({ error: 'App not found' });
+    res.json({ message: 'App deleted' });
+  } catch (err) {
+    logger.error('API DELETE /apps/:id error:', err);
     res.status(500).json({ error: err.message });
   }
 });

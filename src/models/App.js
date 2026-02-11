@@ -7,7 +7,8 @@ const appSchema = new mongoose.Schema({
   iosBundleId: { type: String, default: null },
   iosAppId: { type: String, default: null },
   androidPackageName: { type: String, default: null },
-  admobAppId: { type: String, default: null },
+  admobIosAppId: { type: String, default: null },
+  admobAndroidAppId: { type: String, default: null },
   stripeProductId: { type: String, default: null },
   isActive: { type: Boolean, default: true },
 }, {

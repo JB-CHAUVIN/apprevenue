@@ -1,5 +1,5 @@
 const { google } = require('googleapis');
-const { GooglePlayData, CollectionLog } = require('../models');
+const { App, GooglePlayData, CollectionLog } = require('../models');
 const logger = require('../utils/logger');
 
 function yesterday() {
@@ -12,9 +12,17 @@ async function collect(userId, credentials) {
   const start = Date.now();
   const source = 'googleplay';
 
-  const packageNames = (credentials.packageNames || '').split(',').map(s => s.trim()).filter(Boolean);
-  if (!credentials.serviceAccountJson || packageNames.length === 0) {
+  if (!credentials.serviceAccountJson) {
     await CollectionLog.create({ userId, source, status: 'skipped', message: 'Not configured' });
+    return;
+  }
+
+  // Get package names from user's configured apps
+  const apps = await App.find({ userId, androidPackageName: { $ne: null } }).lean();
+  const packageNames = apps.map(a => a.androidPackageName).filter(Boolean);
+
+  if (packageNames.length === 0) {
+    await CollectionLog.create({ userId, source, status: 'skipped', message: 'No apps with Android package name configured' });
     return;
   }
 
@@ -27,8 +35,11 @@ async function collect(userId, credentials) {
     const dateStr = yesterday();
     let recordCount = 0;
 
+    const permissionErrors = [];
+
     for (const packageName of packageNames) {
       let latestVersionCode = null, latestVersionName = null, track = 'production', releaseStatus = null;
+      let hasPermissionError = false;
 
       try {
         const editRes = await play.edits.insert({ packageName, requestBody: {} });
@@ -44,20 +55,29 @@ async function collect(userId, credentials) {
         }
         await play.edits.delete({ packageName, editId });
       } catch (e) {
-        logger.warn(`Google Play: failed to get tracks for ${packageName}: ${e.message}`);
+        const msg = e.message || '';
+        if (msg.includes('does not have permission') || msg.includes('403')) {
+          hasPermissionError = true;
+          permissionErrors.push(packageName);
+          logger.warn(`Google Play: permission denied for ${packageName} — service account needs access in Play Console`);
+        } else {
+          logger.warn(`Google Play: failed to get tracks for ${packageName}: ${msg}`);
+        }
       }
 
       let averageRating = null, totalRatings = 0;
-      try {
-        const reviewsRes = await play.reviews.list({ packageName });
-        const reviews = reviewsRes.data?.reviews || [];
-        if (reviews.length > 0) {
-          const ratings = reviews.map(r => r.comments?.[0]?.userComment?.starRating).filter(Boolean);
-          totalRatings = ratings.length;
-          averageRating = ratings.length > 0 ? ratings.reduce((a, b) => a + b, 0) / ratings.length : null;
+      if (!hasPermissionError) {
+        try {
+          const reviewsRes = await play.reviews.list({ packageName });
+          const reviews = reviewsRes.data?.reviews || [];
+          if (reviews.length > 0) {
+            const ratings = reviews.map(r => r.comments?.[0]?.userComment?.starRating).filter(Boolean);
+            totalRatings = ratings.length;
+            averageRating = ratings.length > 0 ? ratings.reduce((a, b) => a + b, 0) / ratings.length : null;
+          }
+        } catch (e) {
+          logger.warn(`Google Play: failed to get reviews for ${packageName}: ${e.message}`);
         }
-      } catch (e) {
-        logger.warn(`Google Play: failed to get reviews for ${packageName}: ${e.message}`);
       }
 
       await GooglePlayData.findOneAndUpdate(
@@ -69,8 +89,14 @@ async function collect(userId, credentials) {
     }
 
     const duration = Date.now() - start;
-    await CollectionLog.create({ userId, source, status: 'success', message: `Collected ${recordCount} packages for ${dateStr}`, recordsCollected: recordCount, durationMs: duration });
-    logger.info(`Google Play: collected ${recordCount} packages for user ${userId} in ${duration}ms`);
+    if (permissionErrors.length > 0) {
+      const permMsg = `Permission denied for: ${permissionErrors.join(', ')}. Grant access in Google Play Console → Settings → API access.`;
+      await CollectionLog.create({ userId, source, status: 'error', message: permMsg, recordsCollected: recordCount, durationMs: duration });
+      logger.warn(`Google Play: permission errors for user ${userId}: ${permissionErrors.join(', ')}`);
+    } else {
+      await CollectionLog.create({ userId, source, status: 'success', message: `Collected ${recordCount} packages for ${dateStr}`, recordsCollected: recordCount, durationMs: duration });
+      logger.info(`Google Play: collected ${recordCount} packages for user ${userId} in ${duration}ms`);
+    }
   } catch (err) {
     const duration = Date.now() - start;
     await CollectionLog.create({ userId, source, status: 'error', message: err.message, durationMs: duration });

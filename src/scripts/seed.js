@@ -37,9 +37,9 @@ async function seed() {
   const userId = admin._id;
 
   // Create 3 sample apps
-  const app1 = await App.create({ userId, name: 'My iOS App', iosBundleId: 'com.myapp.ios', iosAppId: '1234567890', admobAppId: 'ca-app-pub-1234567890~1234567890', stripeProductId: 'prod_ios_001' });
-  const app2 = await App.create({ userId, name: 'My Android App', androidPackageName: 'com.myapp.android', admobAppId: 'ca-app-pub-9876543210~9876543210' });
-  const app3 = await App.create({ userId, name: 'My Cross-Platform App', iosBundleId: 'com.myapp.cross', iosAppId: '9999999999', androidPackageName: 'com.myapp.cross', admobAppId: 'ca-app-pub-5555555555~5555555555', stripeProductId: 'prod_cross_001' });
+  const app1 = await App.create({ userId, name: 'My iOS App', iosBundleId: 'com.myapp.ios', iosAppId: '1234567890', admobIosAppId: 'ca-app-pub-1234567890~1234567890', stripeProductId: 'prod_ios_001' });
+  const app2 = await App.create({ userId, name: 'My Android App', androidPackageName: 'com.myapp.android', admobAndroidAppId: 'ca-app-pub-9876543210~9876543210' });
+  const app3 = await App.create({ userId, name: 'My Cross-Platform App', iosBundleId: 'com.myapp.cross', iosAppId: '9999999999', androidPackageName: 'com.myapp.cross', admobIosAppId: 'ca-app-pub-5555555555~5555555555', admobAndroidAppId: 'ca-app-pub-5555555555~6666666666', stripeProductId: 'prod_cross_001' });
   logger.info('Sample apps created');
 
   // AdMob data (30 days) — App 1

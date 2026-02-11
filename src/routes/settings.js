@@ -1,12 +1,29 @@
 const express = require('express');
 const { requireAuth } = require('../middleware/auth');
-const { UserCredential } = require('../models');
+const { UserCredential, App, User } = require('../models');
 const credentialTest = require('../services/credential-test');
 const logger = require('../utils/logger');
 
 const router = express.Router();
 
 const sources = ['admob', 'stripe', 'appstore', 'googleplay'];
+
+// My Apps page
+router.get('/dashboard/settings/apps', requireAuth, async (req, res) => {
+  try {
+    const apps = await App.find({ userId: req.user.id }).sort({ name: 1 }).lean();
+    const user = await User.findById(req.user.id).lean();
+    res.render('settings/apps', {
+      user,
+      activePage: 'settings-apps',
+      apps,
+      plan: user.plan || 'free',
+    });
+  } catch (err) {
+    logger.error('Settings apps error:', err);
+    res.status(500).render('error', { message: err.message });
+  }
+});
 
 // Generic GET /dashboard/settings/:source
 sources.forEach(source => {

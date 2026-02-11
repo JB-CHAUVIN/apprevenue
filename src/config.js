@@ -1,11 +1,11 @@
 require('dotenv').config();
 
 module.exports = {
-  port: parseInt(process.env.PORT, 10) || 3000,
+  port: parseInt(process.env.PORT, 10) || 2203,
   env: process.env.NODE_ENV || 'development',
   jwtSecret: process.env.JWT_SECRET || 'dev-secret-change-me',
   mongoUri: process.env.MONGODB_URI || 'mongodb://localhost:27017/apprevenue',
-  appUrl: process.env.APP_URL || 'http://localhost:3000',
+  appUrl: process.env.APP_URL || 'http://localhost:2203',
   admin: {
     email: process.env.ADMIN_EMAIL || 'admin@example.com',
     password: process.env.ADMIN_PASSWORD || 'changeme123',

@@ -48,10 +48,10 @@ async function collect(userId, credentials) {
       let latestVersion = null, latestBuild = null, buildStatus = null;
 
       try {
-        const versionsRes = await apiGet(`/apps/${appId}/appStoreVersions?limit=1&sort=-versionString&fields[appStoreVersions]=versionString,appStoreState`);
+        const versionsRes = await apiGet(`/apps/${appId}/appStoreVersions?limit=1&fields[appStoreVersions]=versionString,appStoreState`);
         const ver = versionsRes.data?.[0];
         if (ver) { latestVersion = ver.attributes?.versionString; buildStatus = ver.attributes?.appStoreState; }
-        const buildsRes = await apiGet(`/apps/${appId}/builds?limit=1&sort=-uploadedDate&fields[builds]=version`);
+        const buildsRes = await apiGet(`/apps/${appId}/builds?limit=1&fields[builds]=version`);
         const build = buildsRes.data?.[0];
         if (build) latestBuild = build.attributes?.version;
       } catch (e) {

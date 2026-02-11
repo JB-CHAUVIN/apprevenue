@@ -1,0 +1,331 @@
+<%- include('../partials/head') %>
+
+<div class="layout">
+  <%- include('../partials/sidebar', { apps: apps, currentApp: null }) %>
+
+  <main class="main-content">
+    <div class="page-header">
+      <h1>My Apps</h1>
+      <button class="btn btn-neon" onclick="showForm()">+ Add App</button>
+    </div>
+
+    <% if (plan === 'free') { %>
+    <div class="alert alert-info">
+      Free plan is limited to <strong>2 apps</strong>. <a href="/dashboard/billing" style="color:var(--neon-cyan);">Upgrade to Pro</a> for unlimited apps.
+    </div>
+    <% } %>
+
+    <div id="appFormSection" style="display:none;margin-bottom:32px;">
+      <div class="card">
+        <h2 id="formTitle" style="font-family:var(--font-display);font-size:16px;margin-bottom:20px;">Add New App</h2>
+        <form id="appForm" onsubmit="saveApp(event)">
+          <input type="hidden" id="editAppId" value="" />
+
+          <div class="form-group">
+            <label>App Name *</label>
+            <input type="text" id="appName" name="name" required placeholder="My Awesome App" />
+          </div>
+
+          <!-- iOS App Store -->
+          <div class="form-group">
+            <label>iOS App (App Store Connect)</label>
+            <div class="service-select-row">
+              <select id="iosAppSelect" onchange="onIosAppSelected()" disabled>
+                <option value="">-- Select an iOS app --</option>
+              </select>
+              <button type="button" class="btn btn-outline btn-sm" onclick="loadIosApps()" id="loadIosBtn">Load</button>
+            </div>
+            <div id="iosNotConfigured" class="field-hint" style="display:none;">
+              App Store not configured. <a href="/dashboard/settings/appstore">Configure</a> or enter manually below.
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="form-group">
+              <label>iOS Bundle ID</label>
+              <input type="text" id="iosBundleId" name="iosBundleId" placeholder="com.myapp.ios" />
+            </div>
+            <div class="form-group">
+              <label>iOS App ID</label>
+              <input type="text" id="iosAppId" name="iosAppId" placeholder="1234567890" />
+            </div>
+          </div>
+
+          <!-- Android -->
+          <div class="form-group">
+            <label>Android Package Name</label>
+            <input type="text" id="androidPackageName" name="androidPackageName" placeholder="com.myapp.android" />
+          </div>
+
+          <!-- Stripe -->
+          <div class="form-group">
+            <label>Stripe Product</label>
+            <div class="service-select-row">
+              <select id="stripeProductSelect" onchange="onStripeProductSelected()" disabled>
+                <option value="">-- Select a Stripe product --</option>
+              </select>
+              <button type="button" class="btn btn-outline btn-sm" onclick="loadStripeProducts()" id="loadStripeBtn">Load</button>
+            </div>
+            <div id="stripeNotConfigured" class="field-hint" style="display:none;">
+              Stripe not configured. <a href="/dashboard/settings/stripe">Configure</a> or enter manually below.
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Stripe Product ID</label>
+            <input type="text" id="stripeProductId" name="stripeProductId" placeholder="prod_xxx" />
+          </div>
+
+          <!-- AdMob -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+            <div class="form-group">
+              <label>AdMob iOS App ID</label>
+              <input type="text" id="admobIosAppId" name="admobIosAppId" placeholder="ca-app-pub-xxx~yyy" />
+            </div>
+            <div class="form-group">
+              <label>AdMob Android App ID</label>
+              <input type="text" id="admobAndroidAppId" name="admobAndroidAppId" placeholder="ca-app-pub-xxx~zzz" />
+            </div>
+          </div>
+
+          <div style="display:flex;gap:12px;margin-top:8px;">
+            <button type="submit" class="btn btn-neon">Save</button>
+            <button type="button" class="btn btn-outline" onclick="hideForm()">Cancel</button>
+          </div>
+        </form>
+        <div id="formError" class="alert alert-error" style="display:none;margin-top:16px;"></div>
+      </div>
+    </div>
+
+    <div id="appList">
+      <% if (apps.length === 0) { %>
+      <div class="card" style="text-align:center;padding:48px 24px;color:var(--text-muted);">
+        <p style="font-size:16px;margin-bottom:8px;">No apps yet</p>
+        <p style="font-size:14px;">Click "Add App" to configure your first application.</p>
+      </div>
+      <% } else { %>
+        <% apps.forEach(function(app) { %>
+        <div class="card" style="margin-bottom:16px;" id="app-card-<%= app._id %>">
+          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;">
+            <div>
+              <h3 style="font-size:16px;font-weight:600;margin-bottom:8px;"><%= app.name %></h3>
+              <div style="display:flex;flex-wrap:wrap;gap:6px;">
+                <% if (app.iosBundleId) { %><span class="badge badge-platform">iOS</span><% } %>
+                <% if (app.androidPackageName) { %><span class="badge badge-platform">Android</span><% } %>
+                <% if (app.stripeProductId) { %><span class="badge badge-platform">Stripe</span><% } %>
+                <% if (app.admobIosAppId || app.admobAndroidAppId) { %><span class="badge badge-platform">AdMob</span><% } %>
+              </div>
+            </div>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-outline btn-sm" onclick='editApp(<%- JSON.stringify(app) %>)'>Edit</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteApp('<%= app._id %>')">Delete</button>
+            </div>
+          </div>
+        </div>
+        <% }); %>
+      <% } %>
+    </div>
+  </main>
+</div>
+
+<style>
+  .service-select-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+  }
+  .service-select-row select {
+    flex: 1;
+  }
+  .field-hint {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 6px;
+  }
+  .field-hint a {
+    color: var(--neon-cyan);
+    text-decoration: none;
+  }
+  .field-hint a:hover {
+    text-decoration: underline;
+  }
+  .service-select-row .btn-sm {
+    white-space: nowrap;
+  }
+</style>
+
+<script>
+// ---- Cache for loaded data ----
+let iosAppsCache = null;
+let stripeProductsCache = null;
+// ---- Helper: fetch service list with error handling ----
+async function fetchServiceList(url, cache) {
+  if (cache) return cache;
+  const res = await fetch(url);
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.error || 'Server error (' + res.status + ')');
+  return data;
+}
+
+// ---- iOS App Store ----
+async function loadIosApps() {
+  const btn = document.getElementById('loadIosBtn');
+  const sel = document.getElementById('iosAppSelect');
+  const hint = document.getElementById('iosNotConfigured');
+  btn.textContent = 'Loading...'; btn.disabled = true; hint.style.display = 'none';
+  try {
+    iosAppsCache = await fetchServiceList('/api/services/appstore/apps', iosAppsCache);
+    if (!iosAppsCache.configured) {
+      hint.style.display = 'block'; return;
+    }
+    sel.innerHTML = '<option value="">-- Select an iOS app --</option>';
+    iosAppsCache.items.forEach(app => {
+      const opt = document.createElement('option');
+      opt.value = JSON.stringify(app);
+      opt.textContent = app.name + ' (' + app.bundleId + ')';
+      sel.appendChild(opt);
+    });
+    sel.disabled = false;
+  } catch (e) {
+    iosAppsCache = null;
+    hint.innerHTML = '<strong>Error:</strong> ' + e.message; hint.style.display = 'block';
+  }
+  btn.textContent = 'Load'; btn.disabled = false;
+}
+
+function onIosAppSelected() {
+  const sel = document.getElementById('iosAppSelect');
+  if (!sel.value) return;
+  const app = JSON.parse(sel.value);
+  document.getElementById('iosBundleId').value = app.bundleId || '';
+  document.getElementById('iosAppId').value = app.appId || '';
+  if (!document.getElementById('appName').value) {
+    document.getElementById('appName').value = app.name || '';
+  }
+}
+
+// ---- Stripe ----
+async function loadStripeProducts() {
+  const btn = document.getElementById('loadStripeBtn');
+  const sel = document.getElementById('stripeProductSelect');
+  const hint = document.getElementById('stripeNotConfigured');
+  btn.textContent = 'Loading...'; btn.disabled = true; hint.style.display = 'none';
+  try {
+    stripeProductsCache = await fetchServiceList('/api/services/stripe/products', stripeProductsCache);
+    if (!stripeProductsCache.configured) {
+      hint.style.display = 'block'; return;
+    }
+    sel.innerHTML = '<option value="">-- Select a Stripe product --</option>';
+    stripeProductsCache.items.forEach(p => {
+      const opt = document.createElement('option');
+      opt.value = p.productId;
+      opt.textContent = p.name + ' (' + p.productId + ')';
+      sel.appendChild(opt);
+    });
+    sel.disabled = false;
+  } catch (e) {
+    stripeProductsCache = null;
+    hint.innerHTML = '<strong>Error:</strong> ' + e.message; hint.style.display = 'block';
+  }
+  btn.textContent = 'Load'; btn.disabled = false;
+}
+
+function onStripeProductSelected() {
+  const sel = document.getElementById('stripeProductSelect');
+  if (!sel.value) return;
+  document.getElementById('stripeProductId').value = sel.value;
+}
+
+// ---- Form logic ----
+function showForm(app) {
+  document.getElementById('appFormSection').style.display = 'block';
+  document.getElementById('formError').style.display = 'none';
+  if (!app) {
+    document.getElementById('formTitle').textContent = 'Add New App';
+    document.getElementById('appForm').reset();
+    document.getElementById('editAppId').value = '';
+    resetSelects();
+  }
+  document.getElementById('appFormSection').scrollIntoView({ behavior: 'smooth' });
+}
+
+function hideForm() {
+  document.getElementById('appFormSection').style.display = 'none';
+  document.getElementById('appForm').reset();
+  document.getElementById('editAppId').value = '';
+  resetSelects();
+}
+
+function resetSelects() {
+  ['iosAppSelect', 'stripeProductSelect'].forEach(id => {
+    document.getElementById(id).value = '';
+  });
+  ['iosNotConfigured', 'stripeNotConfigured'].forEach(id => {
+    document.getElementById(id).style.display = 'none';
+  });
+}
+
+function editApp(app) {
+  showForm(app);
+  document.getElementById('formTitle').textContent = 'Edit App';
+  document.getElementById('editAppId').value = app._id;
+  document.getElementById('appName').value = app.name || '';
+  document.getElementById('iosBundleId').value = app.iosBundleId || '';
+  document.getElementById('iosAppId').value = app.iosAppId || '';
+  document.getElementById('androidPackageName').value = app.androidPackageName || '';
+  document.getElementById('stripeProductId').value = app.stripeProductId || '';
+  document.getElementById('admobIosAppId').value = app.admobIosAppId || '';
+  document.getElementById('admobAndroidAppId').value = app.admobAndroidAppId || '';
+}
+
+async function saveApp(e) {
+  e.preventDefault();
+  const errorEl = document.getElementById('formError');
+  errorEl.style.display = 'none';
+
+  const id = document.getElementById('editAppId').value;
+  const body = {
+    name: document.getElementById('appName').value,
+    iosBundleId: document.getElementById('iosBundleId').value || null,
+    iosAppId: document.getElementById('iosAppId').value || null,
+    androidPackageName: document.getElementById('androidPackageName').value || null,
+    stripeProductId: document.getElementById('stripeProductId').value || null,
+    admobIosAppId: document.getElementById('admobIosAppId').value || null,
+    admobAndroidAppId: document.getElementById('admobAndroidAppId').value || null,
+  };
+
+  try {
+    const url = id ? '/api/apps/' + id : '/api/apps';
+    const method = id ? 'PUT' : 'POST';
+    const res = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+    const data = await res.json();
+    if (!res.ok) {
+      errorEl.textContent = data.error || 'Failed to save app';
+      errorEl.style.display = 'block';
+      return;
+    }
+    window.location.reload();
+  } catch (err) {
+    errorEl.textContent = err.message;
+    errorEl.style.display = 'block';
+  }
+}
+
+async function deleteApp(id) {
+  if (!confirm('Are you sure you want to delete this app?')) return;
+  try {
+    const res = await fetch('/api/apps/' + id, { method: 'DELETE' });
+    if (!res.ok) {
+      const data = await res.json();
+      alert(data.error || 'Failed to delete app');
+      return;
+    }
+    window.location.reload();
+  } catch (err) {
+    alert(err.message);
+  }
+}
+</script>
+<%- include('../partials/footer') %>

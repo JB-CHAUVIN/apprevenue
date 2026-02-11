@@ -12,10 +12,36 @@
       <h2>Setup Instructions</h2>
       <div class="card">
         <div class="steps">
-          <div class="step"><div class="step-number">1</div><div class="step-text">Go to <code>Google Cloud Console</code> &rarr; IAM & Admin &rarr; Service Accounts</div></div>
-          <div class="step"><div class="step-number">2</div><div class="step-text">Create a service account and grant <code>Google Play Developer API</code> access</div></div>
-          <div class="step"><div class="step-number">3</div><div class="step-text">Download the <code>JSON key file</code> and paste its content below</div></div>
-          <div class="step"><div class="step-number">4</div><div class="step-text">In Google Play Console &rarr; Settings &rarr; API access, link the service account</div></div>
+          <div class="step"><div class="step-number">1</div><div class="step-text"><strong>Select or create a Google Cloud project</strong><br/>Go to <code>Google Cloud Console</code> &rarr; select an existing project or click <strong>New Project</strong>. Give it a name (e.g. "AppTrackr") and click <strong>Create</strong>.</div></div>
+          <div class="step"><div class="step-number">2</div><div class="step-text"><strong>Enable the required APIs</strong><br/>In your project, go to <code>APIs &amp; Services</code> &rarr; <code>Library</code>. Search for and enable:<br/>&bull; <code>Google Play Android Developer API</code> (required) &mdash; for collecting app data (versions, reviews, etc.)<br/>&bull; <code>Google Play Developer Reporting API</code> (optional) &mdash; allows listing your apps in the app selector on the <em>My Apps</em> page</div></div>
+          <div class="step"><div class="step-number">3</div><div class="step-text"><strong>Create a Service Account</strong><br/>Go to <code>IAM &amp; Admin</code> &rarr; <code>Service Accounts</code> &rarr; <strong>Create Service Account</strong>. Enter a name (e.g. "apptrackr-reader"), skip optional permissions, then click <strong>Done</strong>.</div></div>
+          <div class="step"><div class="step-number">4</div><div class="step-text"><strong>Generate the JSON key</strong><br/>Click on the newly created service account &rarr; <code>Keys</code> tab &rarr; <strong>Add Key</strong> &rarr; <code>Create new key</code> &rarr; select <strong>JSON</strong> &rarr; click <strong>Create</strong>. A <code>.json</code> file will download &mdash; paste its entire contents in the field below.</div></div>
+
+          <div class="step"><div class="step-number">5</div><div class="step-text"><strong>Link the service account in Google Play Console</strong><br/>
+            <strong>a.</strong> Go to <a href="https://play.google.com/console" target="_blank" style="color:var(--neon-cyan);">Google Play Console</a> &rarr; <strong>Settings</strong> (left sidebar) &rarr; <strong>API access</strong><br/>
+            <strong>b.</strong> Find your service account in the list and click <strong>Manage</strong> (or <strong>Grant access</strong> if not yet linked)<br/>
+            <strong>c.</strong> Under <strong>Account permissions</strong>, enable at minimum:<br/>
+            <span style="display:block;padding:8px 0 8px 16px;">
+              &bull; <code>View app information and download bulk reports</code> (required)<br/>
+              &bull; <code>View financial data, orders, and cancellation survey responses</code> (recommended, for revenue data)<br/>
+              &bull; <code>Manage store presence</code> (recommended, for version/track info)
+            </span>
+            <strong>d.</strong> Under <strong>App permissions</strong>, click <strong>Add app</strong> and select each app you want to track. Or choose <strong>All apps</strong> to grant access to everything.<br/>
+            <strong>e.</strong> Click <strong>Invite user</strong> / <strong>Save changes</strong>
+          </div></div>
+        </div>
+        <div class="alert alert-info" style="margin-top:16px;margin-bottom:0;">
+          <strong>Note:</strong> For the app selector in <em>My Apps</em> to auto-list your apps, you can also enable the <code>Google Play Developer Reporting API</code> in your Cloud project. If not available, you can enter package names manually.
+        </div>
+
+        <div class="alert alert-error" style="margin-top:12px;margin-bottom:0;display:none;" id="permissionHelp">
+          <strong>Troubleshooting &mdash; "The caller does not have permission"</strong><br/>
+          This error means the service account is not authorized for one or more of your apps. To fix it:<br/>
+          &bull; Go to <code>Google Play Console</code> &rarr; <strong>Settings</strong> &rarr; <strong>API access</strong><br/>
+          &bull; Click <strong>Manage</strong> on your service account<br/>
+          &bull; Make sure the correct <strong>App permissions</strong> are set (add each app individually, or select <strong>All apps</strong>)<br/>
+          &bull; Make sure <strong>Account permissions</strong> include at least <em>View app information and download bulk reports</em><br/>
+          &bull; Changes can take up to <strong>24 hours</strong> to propagate
         </div>
       </div>
     </div>
@@ -25,7 +51,6 @@
       <div class="card">
         <form method="POST" action="/dashboard/settings/googleplay" id="credForm">
           <div class="form-group"><label>Service Account JSON</label><textarea name="serviceAccountJson" placeholder="Paste the entire JSON key file content here..."><%= credential.credentials?.serviceAccountJson || '' %></textarea></div>
-          <div class="form-group"><label>Package Names (comma-separated)</label><input type="text" name="packageNames" value="<%= credential.credentials?.packageNames || '' %>" placeholder="com.yourapp.one, com.yourapp.two" /></div>
           <div style="display:flex;gap:12px;">
             <button type="button" class="btn btn-outline" onclick="testConnection()">Test Connection</button>
             <button type="submit" class="btn btn-neon">Save</button>
@@ -42,12 +67,18 @@ async function testConnection() {
   const form = document.getElementById('credForm');
   const data = Object.fromEntries(new FormData(form));
   const el = document.getElementById('testResult');
+  const permHelp = document.getElementById('permissionHelp');
   el.className = 'test-result'; el.style.display = 'block'; el.textContent = 'Testing...';
+  permHelp.style.display = 'none';
   try {
     const res = await fetch('/dashboard/settings/googleplay/test', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) });
     const result = await res.json();
     el.className = 'test-result ' + (result.success ? 'success' : 'error');
     el.textContent = result.message;
+    if (!result.success && result.message && result.message.includes('PERMISSION_ERROR')) {
+      el.textContent = result.message.replace('PERMISSION_ERROR: ', '');
+      permHelp.style.display = 'block';
+    }
   } catch (e) { el.className = 'test-result error'; el.textContent = e.message; }
 }
 </script>

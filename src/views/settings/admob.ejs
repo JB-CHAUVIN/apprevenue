@@ -15,11 +15,41 @@
       <h2>Setup Instructions</h2>
       <div class="card">
         <div class="steps">
-          <div class="step"><div class="step-number">1</div><div class="step-text">Go to <code>Google Cloud Console</code> &rarr; APIs & Services &rarr; Credentials</div></div>
-          <div class="step"><div class="step-number">2</div><div class="step-text">Create an <code>OAuth 2.0 Client ID</code> (Web application type)</div></div>
-          <div class="step"><div class="step-number">3</div><div class="step-text">Copy the <code>Client ID</code> and <code>Client Secret</code></div></div>
-          <div class="step"><div class="step-number">4</div><div class="step-text">Generate a <code>Refresh Token</code> using the OAuth Playground (scope: <code>https://www.googleapis.com/auth/admob.report</code>)</div></div>
-          <div class="step"><div class="step-number">5</div><div class="step-text">Enter your <code>Publisher ID</code> (found in AdMob &rarr; Account &rarr; Publisher ID, starts with <code>pub-</code>)</div></div>
+          <div class="step"><div class="step-number">1</div><div class="step-text"><strong>Enable the AdMob API</strong><br/>Go to <code>Google Cloud Console</code> &rarr; <code>APIs &amp; Services</code> &rarr; <code>Library</code>. Search for <code>AdMob API</code> and click <strong>Enable</strong>.</div></div>
+
+          <div class="step"><div class="step-number">2</div><div class="step-text"><strong>Configure the OAuth consent screen</strong><br/>Go to <code>APIs &amp; Services</code> &rarr; <code>OAuth consent screen</code>. Select <strong>External</strong>, fill in the app name and your email, then click <strong>Save</strong>. Under <strong>Scopes</strong>, add <code>https://www.googleapis.com/auth/admob.readonly</code>. Under <strong>Test users</strong>, add the Google account email that owns your AdMob account.</div></div>
+
+          <div class="step"><div class="step-number">3</div><div class="step-text"><strong>Create an OAuth 2.0 Client ID</strong><br/>Go to <code>APIs &amp; Services</code> &rarr; <code>Credentials</code> &rarr; <strong>Create Credentials</strong> &rarr; <code>OAuth client ID</code>.<br/>
+            &bull; Application type: <strong>Web application</strong><br/>
+            &bull; Name: e.g. "AppTrackr"<br/>
+            &bull; <strong>Authorized redirect URIs</strong>: add <code>https://developers.google.com/oauthplayground</code><br/>
+            Click <strong>Create</strong>, then copy the <code>Client ID</code> and <code>Client Secret</code>.</div></div>
+
+          <div class="step"><div class="step-number">4</div><div class="step-text"><strong>Generate a Refresh Token via OAuth Playground</strong><br/>
+            <strong>a.</strong> Open <a href="https://developers.google.com/oauthplayground" target="_blank" style="color:var(--neon-cyan);">OAuth 2.0 Playground</a><br/>
+            <strong>b.</strong> Click the <strong>gear icon</strong> (top right) and configure:<br/>
+            <span style="display:block;padding:8px 0 8px 16px;">
+              &bull; OAuth flow: <code>Server-side</code><br/>
+              &bull; OAuth endpoints: <code>Custom</code><br/>
+              &bull; Authorization endpoint: <code>https://accounts.google.com/o/oauth2/v2/auth</code><br/>
+              &bull; Token endpoint: <code>https://www.googleapis.com/oauth2/v3/token</code><br/>
+              &bull; Access token location: <code>Authorization header w/ Bearer prefix</code><br/>
+              &bull; OAuth Client ID: paste your <code>Client ID</code> from step 3<br/>
+              &bull; OAuth Client Secret: paste your <code>Client Secret</code> from step 3
+            </span>
+            <strong>c.</strong> In the left panel, under <em>"Step 1: Select &amp; authorize APIs"</em>, type this scope in the input field: <code>https://www.googleapis.com/auth/admob.readonly</code> &rarr; click <strong>Authorize APIs</strong><br/>
+            <strong>d.</strong> Sign in with the Google account that owns your AdMob account and grant access<br/>
+            <strong>e.</strong> On <em>"Step 2"</em>, click <strong>Exchange authorization code for tokens</strong><br/>
+            <strong>f.</strong> Copy the <code>Refresh token</code> value (starts with <code>1//</code>)</div></div>
+
+          <div class="step"><div class="step-number">5</div><div class="step-text"><strong>Find your Publisher ID</strong><br/>Go to <a href="https://apps.admob.com" target="_blank" style="color:var(--neon-cyan);">AdMob</a> &rarr; <strong>Settings</strong> &rarr; <strong>Account information</strong>. Copy the <code>Publisher ID</code> (starts with <code>pub-</code>).</div></div>
+        </div>
+
+        <div class="alert alert-info" style="margin-top:16px;margin-bottom:0;">
+          <strong>Troubleshooting:</strong> If you get an <code>unauthorized_client</code> error, verify that:<br/>
+          &bull; <code>https://developers.google.com/oauthplayground</code> is in your OAuth client's <strong>Authorized redirect URIs</strong><br/>
+          &bull; The Refresh Token was generated with the <strong>same</strong> Client ID / Client Secret entered below<br/>
+          &bull; Your Google account is listed as a <strong>Test user</strong> in the OAuth consent screen (required while the app is in "Testing" status)
         </div>
       </div>
     </div>
