@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const fetch = require('node-fetch');
-const { AppStoreData, CollectionLog } = require('../models');
+const { App, AppStoreData, CollectionLog } = require('../models');
 const logger = require('../utils/logger');
 
 const ASC_BASE = 'https://api.appstoreconnect.apple.com/v1';
@@ -40,11 +40,18 @@ async function collect(userId, credentials) {
     let recordCount = 0;
 
     const appsResponse = await apiGet('/apps?fields[apps]=name,bundleId&limit=50');
-    const apps = appsResponse.data || [];
+    const ascApps = appsResponse.data || [];
 
-    for (const app of apps) {
-      const appId = app.id;
-      const appName = app.attributes?.name || appId;
+    // Build a lookup map: iOS App ID → App._id
+    const userApps = await App.find({ userId }).lean();
+    const iosIdToAppRef = {};
+    for (const a of userApps) {
+      if (a.iosAppId) iosIdToAppRef[a.iosAppId] = a._id;
+    }
+
+    for (const ascApp of ascApps) {
+      const appId = ascApp.id;
+      const appName = ascApp.attributes?.name || appId;
       let latestVersion = null, latestBuild = null, buildStatus = null;
 
       try {
@@ -58,9 +65,11 @@ async function collect(userId, credentials) {
         logger.warn(`App Store: failed to get version for ${appId}: ${e.message}`);
       }
 
+      const appRefId = iosIdToAppRef[appId] || null;
+
       await AppStoreData.findOneAndUpdate(
         { userId, date: dateStr, appId },
-        { appName, latestVersion, latestBuild, buildStatus, downloads: 0, updates: 0, proceeds: 0, averageRating: null, totalRatings: 0 },
+        { appRefId, appName, latestVersion, latestBuild, buildStatus, downloads: 0, updates: 0, proceeds: 0, averageRating: null, totalRatings: 0 },
         { upsert: true }
       );
       recordCount++;

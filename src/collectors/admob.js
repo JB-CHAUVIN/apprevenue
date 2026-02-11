@@ -1,5 +1,5 @@
 const { google } = require('googleapis');
-const { AdmobRevenue, CollectionLog } = require('../models');
+const { App, AdmobRevenue, CollectionLog } = require('../models');
 const logger = require('../utils/logger');
 
 function yesterday() {
@@ -42,6 +42,14 @@ async function collect(userId, credentials) {
     const rows = response.data || [];
     let recordCount = 0;
 
+    // Build a lookup map: AdMob app ID → App._id
+    const userApps = await App.find({ userId }).lean();
+    const admobIdToAppRef = {};
+    for (const a of userApps) {
+      if (a.admobIosAppId) admobIdToAppRef[a.admobIosAppId] = a._id;
+      if (a.admobAndroidAppId) admobIdToAppRef[a.admobAndroidAppId] = a._id;
+    }
+
     for (const item of rows) {
       if (!item.row) continue;
       const row = item.row;
@@ -56,9 +64,11 @@ async function collect(userId, credentials) {
       const clk = clicks ? parseInt(clicks, 10) : 0;
       const ecpm = imp > 0 ? (revenueUsd / imp) * 1000 : 0;
 
+      const appRefId = admobIdToAppRef[appId] || null;
+
       await AdmobRevenue.findOneAndUpdate(
         { userId, date: dateStr, appId, country },
-        { appName, estimatedRevenue: revenueUsd, impressions: imp, clicks: clk, ecpm, currency: 'USD' },
+        { appRefId, appName, estimatedRevenue: revenueUsd, impressions: imp, clicks: clk, ecpm, currency: 'USD' },
         { upsert: true }
       );
       recordCount++;

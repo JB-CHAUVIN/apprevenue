@@ -9,6 +9,13 @@ function toObjectId(id) {
   return mongoose.Types.ObjectId.createFromHexString(id);
 }
 
+// Prevent browser caching on dashboard pages (so date-range changes always fetch fresh data)
+router.use('/dashboard', (req, res, next) => {
+  res.set('Cache-Control', 'no-store, no-cache, must-revalidate');
+  res.set('Pragma', 'no-cache');
+  next();
+});
+
 // GET /dashboard — Global view
 router.get('/dashboard', requireAuth, async (req, res) => {
   try {
@@ -75,15 +82,28 @@ router.get('/dashboard/app/:id', requireAuth, async (req, res) => {
     since.setDate(since.getDate() - days);
     const sinceStr = since.toISOString().split('T')[0];
 
+    // Build per-source filters using natural identifiers (works even if appRefId is not yet set)
+    const admobAppIds = [app.admobIosAppId, app.admobAndroidAppId].filter(Boolean);
+    const admobMatch = { userId: toObjectId(userId), date: { $gte: sinceStr } };
+    if (admobAppIds.length > 0) {
+      admobMatch.appId = admobAppIds.length === 1 ? admobAppIds[0] : { $in: admobAppIds };
+    } else {
+      admobMatch.appId = null; // no AdMob IDs configured → match nothing
+    }
+
     const [admobDaily, appstore, googleplay, stripe, apps] = await Promise.all([
       AdmobRevenue.aggregate([
-        { $match: { userId: toObjectId(userId), date: { $gte: sinceStr }, appRefId: app._id } },
+        { $match: admobMatch },
         { $group: { _id: '$date', revenue: { $sum: '$estimatedRevenue' }, impressions: { $sum: '$impressions' }, clicks: { $sum: '$clicks' } } },
         { $sort: { _id: 1 } },
         { $project: { date: '$_id', revenue: 1, impressions: 1, clicks: 1, _id: 0 } },
       ]),
-      AppStoreData.find({ userId, date: { $gte: sinceStr }, appRefId: app._id }).sort({ date: -1 }).lean(),
-      GooglePlayData.find({ userId, date: { $gte: sinceStr }, appRefId: app._id }).sort({ date: -1 }).lean(),
+      app.iosAppId
+        ? AppStoreData.find({ userId, date: { $gte: sinceStr }, appId: app.iosAppId }).sort({ date: -1 }).lean()
+        : Promise.resolve([]),
+      app.androidPackageName
+        ? GooglePlayData.find({ userId, date: { $gte: sinceStr }, packageName: app.androidPackageName }).sort({ date: -1 }).lean()
+        : Promise.resolve([]),
       StripeData.find({ userId, date: { $gte: sinceStr }, appRefId: app._id }).sort({ date: 1 }).lean(),
       App.find({ userId, isActive: true }).sort({ name: 1 }).lean(),
     ]);

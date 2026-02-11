@@ -18,8 +18,12 @@ async function collect(userId, credentials) {
   }
 
   // Get package names from user's configured apps
-  const apps = await App.find({ userId, androidPackageName: { $ne: null } }).lean();
-  const packageNames = apps.map(a => a.androidPackageName).filter(Boolean);
+  const userApps = await App.find({ userId, androidPackageName: { $ne: null } }).lean();
+  const packageNames = userApps.map(a => a.androidPackageName).filter(Boolean);
+  const pkgToAppRef = {};
+  for (const a of userApps) {
+    if (a.androidPackageName) pkgToAppRef[a.androidPackageName] = a._id;
+  }
 
   if (packageNames.length === 0) {
     await CollectionLog.create({ userId, source, status: 'skipped', message: 'No apps with Android package name configured' });
@@ -80,9 +84,11 @@ async function collect(userId, credentials) {
         }
       }
 
+      const appRefId = pkgToAppRef[packageName] || null;
+
       await GooglePlayData.findOneAndUpdate(
         { userId, date: dateStr, packageName },
-        { appName: packageName, latestVersionCode, latestVersionName, track, releaseStatus, totalInstalls: 0, activeInstalls: 0, activeSubscriptions: 0, revenue: 0, averageRating, totalRatings },
+        { appRefId, appName: packageName, latestVersionCode, latestVersionName, track, releaseStatus, totalInstalls: 0, activeInstalls: 0, activeSubscriptions: 0, revenue: 0, averageRating, totalRatings },
         { upsert: true }
       );
       recordCount++;

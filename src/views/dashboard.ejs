@@ -7,13 +7,13 @@
     <div class="page-header">
       <h1><% if (currentApp) { %><%= currentApp.name %><% } else { %>Dashboard<% } %></h1>
       <div class="toolbar" style="margin-bottom:0;">
-        <select id="appSelect" onchange="if(this.value==='all'){location.href='/dashboard?days=<%= days %>'}else{location.href='/dashboard/app/'+this.value+'?days=<%= days %>'}">
+        <select id="appSelect" autocomplete="off" onchange="if(this.value==='all'){location.href='/dashboard?days=<%= days %>'}else{location.href='/dashboard/app/'+this.value+'?days=<%= days %>'}">
           <option value="all" <%= !currentApp ? 'selected' : '' %>>All Apps</option>
           <% apps.forEach(function(a) { %>
           <option value="<%= a._id %>" <%= currentApp && currentApp._id.toString() === a._id.toString() ? 'selected' : '' %>><%= a.name %></option>
           <% }); %>
         </select>
-        <select id="periodSelect" onchange="location.href='<%= currentApp ? '/dashboard/app/' + currentApp._id : '/dashboard' %>?days='+this.value">
+        <select id="periodSelect" autocomplete="off" onchange="location.href='<%= currentApp ? '/dashboard/app/' + currentApp._id : '/dashboard' %>?days='+this.value">
           <option value="7" <%= days==7?'selected':'' %>>7 days</option>
           <option value="14" <%= days==14?'selected':'' %>>14 days</option>
           <option value="30" <%= days==30?'selected':'' %>>30 days</option>
